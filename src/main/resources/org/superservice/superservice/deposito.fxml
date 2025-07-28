@@ -29,7 +29,7 @@
                   <Insets top="10.0" />
                </VBox.margin>
             </Button>
-            <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="150.0" text="Modificar repuesto">
+            <Button fx:id="btnModRepuesto" mnemonicParsing="false" onAction="#modRepuesto" prefHeight="30.0" prefWidth="150.0" text="Modificar repuesto">
                <VBox.margin>
                   <Insets top="10.0" />
                </VBox.margin>
@@ -54,7 +54,7 @@
                   <Insets top="10.0" />
                </VBox.margin>
             </Label>
-            <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="150.0" text="Más retirados en mes">
+            <Button fx:id="btnRetiradosEnMes" mnemonicParsing="false" onAction="#retiradonEnMes" prefHeight="30.0" prefWidth="150.0" text="Más retirados en mes">
                <VBox.margin>
                   <Insets top="10.0" />
                </VBox.margin>
@@ -84,7 +84,7 @@
                   <Insets top="10.0" />
                </VBox.margin>
             </Separator>
-            <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="150.0" text="Volver">
+            <Button fx:id="btnVolver" mnemonicParsing="false" onAction="#volver" prefHeight="30.0" prefWidth="150.0" text="Volver">
                <VBox.margin>
                   <Insets top="10.0" />
                </VBox.margin>
