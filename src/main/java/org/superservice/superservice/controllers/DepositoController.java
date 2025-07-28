@@ -19,7 +19,6 @@ import org.superservice.superservice.utilities.alertas.Alertas;
 import org.superservice.superservice.utilities.dialogs.Dialogs;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -89,7 +88,16 @@ public class DepositoController implements Initializable {
     private Button btnBorrarRepuesto;
 
     @FXML
+    private Button btnModRepuesto;
+
+    @FXML
     private Button btnIngresarStock;
+
+    @FXML
+    private Button btnRetiradosEnMes;
+
+    @FXML
+    private Button btnVolver;
 
     @FXML
     private Label labelAvisoStock;
@@ -150,6 +158,39 @@ public class DepositoController implements Initializable {
     }
 
     @FXML
+    private void modRepuesto(ActionEvent event) {
+        boolean resultado;
+        CargarRepuestoController controller;
+        Repuesto repModi = null;
+
+        RepuestoDTOtabla dtoSeleccionado = tablaRepuestos.getSelectionModel().getSelectedItem();
+        if (dtoSeleccionado == null) {
+            Alertas.aviso("Modificar repuesto", "Debe seleccionar un repuesto para modificar.");
+            return;
+        }
+        for (Repuesto r : this.repuestos) {
+            if (r.getId().equals(dtoSeleccionado.getId())) {
+                repModi = r;
+                break;
+            }
+        }
+        try {
+            Repuesto finalRepModi = repModi;
+            controller = Navegador.abrirModal("/org/superservice/superservice/cargarRepuesto.fxml",
+                    (Node) event.getSource(), "Modificar repuesto",
+                    (CargarRepuestoController ctlr) -> {
+                        ctlr.llenarCamposParaModificacionRepuesto(finalRepModi);
+                    });
+        } catch (IOException ioe) {
+            Alertas.aviso("Carga de repuesto", "Error al intentar abrir la ventana.");
+            return;
+        }
+        int indexModificado = this.repuestosTabla.indexOf(dtoSeleccionado);
+        RepuestoDTOtabla dtoModificado = new RepuestoDTOtabla(controller.getRepuestoCargado());
+        this.repuestosTabla.set(indexModificado, dtoModificado);
+    }
+
+    @FXML
     private void borrarRepuesto() {
         Repuesto repBorrar = null;
         Boolean result = null;
@@ -191,8 +232,8 @@ public class DepositoController implements Initializable {
     private void ingresarStock() {
         Stock stockEditar = null;
         Double cantidad;
-        RepuestoDTOtabla seleccionado = tablaRepuestos.getSelectionModel().getSelectedItem();
-        if (seleccionado == null) {
+        RepuestoDTOtabla dtoSeleccionado = tablaRepuestos.getSelectionModel().getSelectedItem();
+        if (dtoSeleccionado == null) {
             Alertas.aviso("Ingresar stock", "Debe seleccionar un repuesto para ingresarle stock.");
             return;
         }
@@ -209,7 +250,7 @@ public class DepositoController implements Initializable {
             return;
         }
 
-        Long idEllegido = seleccionado.getId();
+        Long idEllegido = dtoSeleccionado.getId();
         for (Repuesto r : this.repuestos) {
             if (r.getId().equals(idEllegido)) {
                 stockEditar = r.getStock();
@@ -223,6 +264,25 @@ public class DepositoController implements Initializable {
             Alertas.aviso("Ingreso stock", "Se ha agregado stock con éxito.");
         } else {
             Alertas.aviso("Ingreso stock", "Ha ocurrido un error al agregar stock.");
+            return;
+        }
+        int indexSeleccionado = this.repuestosTabla.indexOf(dtoSeleccionado);
+        dtoSeleccionado.setCantidad(stockEditar.getCantidad());
+        this.repuestosTabla.set(indexSeleccionado,dtoSeleccionado);
+    }
+
+    @FXML
+    private void retiradonEnMes() {
+
+    }
+
+    @FXML
+    private void volver(ActionEvent event) {
+        try {
+            Navegador.cambiarEscena("/org/superservice/superservice/inicio.fxml",
+                    (Node) event.getSource());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

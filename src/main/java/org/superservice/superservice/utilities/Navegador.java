@@ -12,7 +12,6 @@ import java.util.function.Consumer;
 
 public class Navegador {
 
-    //TO-DO: SOBRECARGAR ESTOS MET
     public static void cambiarEscena(String fxmlAbsoluto, Node nodoOrigen) throws IOException {
         FXMLLoader loader = new FXMLLoader(Navegador.class.getResource(fxmlAbsoluto));
         Parent root = loader.load();
@@ -23,12 +22,15 @@ public class Navegador {
         stage.show();
     }
 
-    public static <T> void cambiarEscenaConDato(String fxml, Node origen, Consumer<T> controladorCallback) throws IOException {
-        FXMLLoader loader = new FXMLLoader(Navegador.class.getResource(fxml));
+    /**
+     * Para cambiar escena y pasar algo.
+     */
+    public static <T> void cambiarEscena(String fxmlAbsoluto, Node origen, Consumer<T> controladorCallback) throws IOException {
+        FXMLLoader loader = new FXMLLoader(Navegador.class.getResource(fxmlAbsoluto));
         Parent root = loader.load();
 
-        // Inyectar objeto a través del callback (controlador debe ser de tipo T)
         T controlador = loader.getController();
+        //ejecuta la función pasada en el método
         controladorCallback.accept(controlador);
 
         Stage stage = (Stage) origen.getScene().getWindow();
@@ -63,5 +65,22 @@ public class Navegador {
         return loader.getController();
     }
 
+    public static <T> T abrirModal(String fxmlPath, Node origen, String title, Consumer<T> controllerCallBack) throws IOException {
+        FXMLLoader loader = new FXMLLoader(Navegador.class.getResource(fxmlPath));
+        Parent root = loader.load();
 
+        T controller = loader.getController();
+        controllerCallBack.accept(controller);
+
+        Stage owner = (Stage) origen.getScene().getWindow();
+        Stage dialog = new Stage();
+        dialog.setTitle(title);
+        dialog.initModality(Modality.WINDOW_MODAL);
+        dialog.initOwner(owner);
+        dialog.setResizable(false);
+        dialog.setScene(new Scene(root));
+        dialog.showAndWait();
+
+        return loader.getController();
+    }
 }

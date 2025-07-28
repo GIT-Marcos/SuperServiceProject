@@ -141,20 +141,19 @@ public class RepuestoDAOimpl implements RepuestoDAO {
     }
 
     @Override
-    public List<RepuestoRetiradoReporteDTO> masRetiradosEnMes(int mes, int anio) {
+    public List<RepuestoRetiradoReporteDTO> masRetiradosEnMes(int fechaInicio, int fechaFin) {
         session = Util.getHibernateSession();
 
         TypedQuery<Object[]> query = session.createQuery(
                 "SELECT dr.repuesto, COUNT(dr.repuesto) "
                 + "FROM NotaRetiro nr "
                 + "JOIN nr.detalleRetiroList dr "
-                + "WHERE MONTH(nr.fecha) = :mes "
-                + "AND YEAR(nr.fecha) = :anio "
+                + "WHERE nr.fecha BETWEEN :fechaInicio AND :fechaFin "
                 + "GROUP BY dr.repuesto "
                 + "ORDER BY COUNT(dr.repuesto) DESC",
                 Object[].class)
-                .setParameter("mes", mes)
-                .setParameter("anio", anio)
+                .setParameter("fechaInicio", fechaInicio)
+                .setParameter("fechaFin", fechaFin)
                 .setMaxResults(5);
 
         List<Object[]> lista = query.getResultList();

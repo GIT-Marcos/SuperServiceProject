@@ -27,8 +27,4 @@ public class Dialogs {
         return cantidad;
     }
 
-    public static void cargaRepuesto() {
-
-    }
-
 }

@@ -25,7 +25,7 @@ public class LoginController {
     private void iniciarSesion(ActionEvent event) {
         Usuario usuario = usuarioServ.buscarUsuario(1L);
         try {
-            Navegador.cambiarEscenaConDato("/org/superservice/superservice/inicio.fxml",
+            Navegador.cambiarEscena("/org/superservice/superservice/inicio.fxml",
                     (Node) event.getSource(), (InicioController ctrl) -> {
                         ctrl.setUsuario(usuario);
                     });

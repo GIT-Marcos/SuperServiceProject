@@ -26,11 +26,13 @@ public class CargarRepuestoController implements Initializable {
 
     private Repuesto repuesto = new Repuesto();
 
+    private String codBarraOriginalParaModRepuesto;
+
     private Stock stock = new Stock();
 
     private boolean resultado = false;
 
-    private final RepuestoServ repuestoServ = new RepuestoServ();
+    private RepuestoServ repuestoServ = new RepuestoServ();
 
     @FXML
     private Button btnCargarRepuesto;
@@ -110,8 +112,10 @@ public class CargarRepuestoController implements Initializable {
             return;
         }
 
-        //TO-DO: usar patron de diseño para crear objetos
-        this.stock.setId(null);
+        //TODO: usar patron de diseño para crear objetos esto es un asco
+        if (this.codBarraOriginalParaModRepuesto.isEmpty()) {
+            this.stock.setId(null);
+        }
         this.stock.setActivo(true);
         this.stock.setCantidad(cantidad);
         this.stock.setCantMinima(cantidadMin);
@@ -120,7 +124,9 @@ public class CargarRepuestoController implements Initializable {
         this.stock.setLote(lote);
         this.stock.setObservaciones(observaciones);
 
-        this.repuesto.setId(null);
+        if (this.codBarraOriginalParaModRepuesto.isEmpty()) {
+            this.repuesto.setId(null);
+        }
         this.repuesto.setActivo(true);
         this.repuesto.setCodBarra(codBarra);
         this.repuesto.setMarca(marca);
@@ -129,22 +135,26 @@ public class CargarRepuestoController implements Initializable {
         this.repuesto.setStock(this.stock);
 
         try {
-            boolean resultado = Alertas.confirmacion("Carga repuesto",
-                    "¿Está seguro que desea cargar el repuesto: " + this.repuesto.getDetalle() + "?");
+            boolean resultado = Alertas.confirmacion("Guardar repuesto",
+                    "¿Está seguro que desea guardar el repuesto: " + this.repuesto.getDetalle() + "?");
             if (!resultado) {
                 return;
             }
-            repuestoServ.cargarRepuesto(this.repuesto);
+            if (this.codBarraOriginalParaModRepuesto.isEmpty()) {
+                repuestoServ.cargarRepuesto(this.repuesto);
+            } else {
+                repuestoServ.modificarRepuesto(this.repuesto, this.codBarraOriginalParaModRepuesto);
+            }
         } catch (HibernateException he) {
-            Alertas.aviso("Carga repuesto", he.getMessage());
+            Alertas.aviso("Guardado repuesto", he.getMessage());
             return;
         } catch (Exception e) {
-            Alertas.aviso("Carga repuesto", e.getMessage());
+            Alertas.aviso("Guardado repuesto", e.getMessage());
             return;
         }
 
         this.resultado = true;
-        Alertas.exito("Carga repuesto", "Se a cargado con éxito el repuesto: " + this.repuesto.getDetalle());
+        Alertas.exito("Guardar repuesto", "Se a guardado con éxito el repuesto: " + this.repuesto.getDetalle());
         cerrar(event);
     }
 
@@ -182,6 +192,40 @@ public class CargarRepuestoController implements Initializable {
         observableListUbic.add("Depósito D");
         observableListUbic.add("Depósito E");
         comboUbicaciones.setItems(observableListUbic);
+    }
+
+    /**
+     * Para llenar los campos con los datos de un repuesto y poder modificarlo.
+     *
+     * @param r
+     */
+    public void llenarCamposParaModificacionRepuesto(Repuesto r) {
+        if (r != null && r.getStock() != null) {
+            this.repuesto = r;
+            this.stock = r.getStock();
+            this.codBarraOriginalParaModRepuesto = r.getCodBarra();
+
+            this.tfCodBarra.setText(r.getCodBarra());
+            if (this.comboMarcas.getItems().contains(r.getMarca())) {
+                this.comboMarcas.getSelectionModel().select(r.getMarca());
+            } else {
+                this.comboMarcas.getItems().add(r.getMarca());
+                this.comboMarcas.getSelectionModel().select(r.getMarca());
+            }
+            this.tfNombre.setText(r.getDetalle());
+            this.tfPrecio.setText(r.getPrecio().toString());
+            this.tfCantidadStock.setText(r.getStock().getCantidad().toString());
+            this.tfCantidadStockMin.setText(r.getStock().getCantMinima().toString());
+            this.comboUniMedidas.getSelectionModel().select(r.getStock().getUnidadMedida());
+            if (this.comboUbicaciones.getItems().contains(r.getStock().getUbicacion())) {
+                this.comboUbicaciones.getSelectionModel().select(r.getStock().getUbicacion());
+            } else {
+                this.comboUbicaciones.getItems().add(r.getStock().getUbicacion());
+                this.comboUbicaciones.getSelectionModel().select(r.getStock().getUbicacion());
+            }
+            this.tfLote.setText(r.getStock().getLote());
+            this.tfObservaciones.setText(r.getStock().getObservaciones());
+        }
     }
 
     public Repuesto getRepuestoCargado() {
