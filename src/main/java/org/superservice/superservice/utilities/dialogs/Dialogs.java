@@ -1,14 +1,13 @@
 package org.superservice.superservice.utilities.dialogs;
 
 import javafx.scene.control.TextInputDialog;
-import org.superservice.superservice.utilities.ConversorUnidades;
-import org.superservice.superservice.utilities.VerificadorCampos;
+import org.superservice.superservice.utilities.ManejadorInputs;
 
 import java.util.Optional;
 
 public class Dialogs {
 
-    public static Double agregarStock() {
+    public static Double inputStock() {
         Double cantidad;
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Agregar stock");
@@ -21,8 +20,7 @@ public class Dialogs {
             return null;
         }
         String input = opt.get().trim();
-        VerificadorCampos.cantidadStock(input, true);
-        cantidad = ConversorUnidades.double2Decimales(input);
+        cantidad = ManejadorInputs.cantidadStock(input, true);
 
         return cantidad;
     }

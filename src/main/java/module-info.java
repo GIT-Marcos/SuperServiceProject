@@ -3,6 +3,7 @@ module org.superservice.superservice {
     requires javafx.fxml;
     requires jakarta.persistence;
     requires org.hibernate.orm.core;
+    requires java.desktop;
 
 
     opens org.superservice.superservice to javafx.fxml;

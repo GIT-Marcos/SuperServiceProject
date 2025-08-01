@@ -13,7 +13,7 @@ import org.superservice.superservice.entities.Usuario;
 import org.superservice.superservice.enums.PrivilegioUsuario;
 import org.superservice.superservice.services.UsuarioServ;
 import org.superservice.superservice.utilities.Navegador;
-import org.superservice.superservice.utilities.VerificadorCampos;
+import org.superservice.superservice.utilities.ManejadorInputs;
 import org.superservice.superservice.utilities.alertas.Alertas;
 
 import java.io.IOException;
@@ -57,9 +57,9 @@ public class CrearUsuarioController implements Initializable {
         PrivilegioUsuario privilegio = comboRoles.getSelectionModel().getSelectedItem();
 
         try {
-            VerificadorCampos.inputTextoGenerico(nombre, 4, 20, true, true, null);
-            VerificadorCampos.inputTextoGenerico(contrasenia, 4, 20, true, false, null);
-        } catch (IllegalArgumentException iae) {
+            ManejadorInputs.textoGenerico(nombre,true,4,20);
+            ManejadorInputs.textoGenerico(contrasenia,true,4,20);
+           } catch (IllegalArgumentException iae) {
             Alertas.aviso("Datos incorrectos", iae.getMessage());
             return;
         }

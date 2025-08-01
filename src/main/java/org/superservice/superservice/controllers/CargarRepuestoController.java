@@ -14,8 +14,7 @@ import org.hibernate.HibernateException;
 import org.superservice.superservice.entities.Repuesto;
 import org.superservice.superservice.entities.Stock;
 import org.superservice.superservice.services.RepuestoServ;
-import org.superservice.superservice.utilities.ConversorUnidades;
-import org.superservice.superservice.utilities.VerificadorCampos;
+import org.superservice.superservice.utilities.ManejadorInputs;
 import org.superservice.superservice.utilities.alertas.Alertas;
 
 import java.math.BigDecimal;
@@ -26,7 +25,7 @@ public class CargarRepuestoController implements Initializable {
 
     private Repuesto repuesto = new Repuesto();
 
-    private String codBarraOriginalParaModRepuesto;
+    private String codBarraOriginalParaModRepuesto = "";
 
     private Stock stock = new Stock();
 
@@ -91,19 +90,16 @@ public class CargarRepuestoController implements Initializable {
         Double cantidad;
         Double cantidadMin;
         try {
-            VerificadorCampos.codFacturaCodBarra(codBarra, true);
-            VerificadorCampos.inputTextoGenerico(marca, 2, 30, true, true, null);
-            VerificadorCampos.inputTextoGenerico(nombre, 2, 40, true, true, null);
-            VerificadorCampos.dinero(inputPrecio, true);
-            VerificadorCampos.cantidadStock(inputCantidad, true);
-            VerificadorCampos.cantidadStock(inputCantidadMin, true);
-            VerificadorCampos.inputTextoGenerico(ubicacion, 2, 30, true, true, null);
-            VerificadorCampos.inputTextoGenerico(lote, 0, 30, false, true, null);
-            VerificadorCampos.inputTextoGenerico(observaciones, 0, 100, false, true, null);
-
-            precio = ConversorUnidades.bdParaDinero(inputPrecio);
-            cantidad = ConversorUnidades.double2Decimales(inputCantidad);
-            cantidadMin = ConversorUnidades.double2Decimales(inputCantidadMin);
+            ManejadorInputs.codBarras(codBarra, true);
+            ManejadorInputs.textoGenerico(marca, true, null, 30);
+            ManejadorInputs.textoGenerico(nombre, true, null, 40);
+            precio = ManejadorInputs.dinero(inputPrecio, true);
+            cantidad = ManejadorInputs.cantidadStock(inputCantidad, true);
+            cantidadMin = ManejadorInputs.cantidadStock(inputCantidadMin, true);
+            ManejadorInputs.textoGenerico(uniMedida, true, null, 20);
+            ManejadorInputs.textoGenerico(ubicacion, true, null, 20);
+            ManejadorInputs.textoGenerico(lote, false, null, 40);
+            ManejadorInputs.textoGenerico(observaciones, false, null, 100);
         } catch (NumberFormatException nfe) {
             Alertas.aviso("Carga repuesto", nfe.getMessage());
             return;
@@ -112,7 +108,7 @@ public class CargarRepuestoController implements Initializable {
             return;
         }
 
-        //TODO: usar patron de diseño para crear objetos esto es un asco
+        //TODO: usar patrón de diseño para crear objetos esto es un asco
         if (this.codBarraOriginalParaModRepuesto.isEmpty()) {
             this.stock.setId(null);
         }

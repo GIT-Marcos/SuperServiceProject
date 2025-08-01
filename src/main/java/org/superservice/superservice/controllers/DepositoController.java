@@ -14,7 +14,7 @@ import org.superservice.superservice.entities.Stock;
 import org.superservice.superservice.services.RepuestoServ;
 import org.superservice.superservice.services.StockServ;
 import org.superservice.superservice.utilities.Navegador;
-import org.superservice.superservice.utilities.VerificadorCampos;
+import org.superservice.superservice.utilities.ManejadorInputs;
 import org.superservice.superservice.utilities.alertas.Alertas;
 import org.superservice.superservice.utilities.dialogs.Dialogs;
 
@@ -120,7 +120,7 @@ public class DepositoController implements Initializable {
         boolean mostrarNormales = checkMostrarNormal.isSelected();
         boolean mostrarStockBajo = checkMostrarBajo.isSelected();
         try {
-            VerificadorCampos.inputTextoGenerico(input, 0, 40, false, true, null);
+            ManejadorInputs.textoGenerico(input,false, null, 40);
         } catch (IllegalArgumentException iae) {
             Alertas.aviso("Atención", iae.getMessage());
             return;
@@ -128,6 +128,10 @@ public class DepositoController implements Initializable {
 
         if (mostrarNormales || mostrarStockBajo) {
             this.repuestos = repuestoServ.buscarConFiltros(input, buscarPor, mostrarNormales, mostrarStockBajo, ordenarPor, tipoOrden);
+        } else if (!mostrarNormales && !mostrarStockBajo) {
+            this.repuestos.clear();
+            this.repuestosTabla.clear();
+            return;
         }
         llenarTabla();
     }
@@ -186,6 +190,7 @@ public class DepositoController implements Initializable {
             return;
         }
         int indexModificado = this.repuestosTabla.indexOf(dtoSeleccionado);
+        //todo:devolver el repuesto recien cargardo y agregarlo a la lista de clase
         RepuestoDTOtabla dtoModificado = new RepuestoDTOtabla(controller.getRepuestoCargado());
         this.repuestosTabla.set(indexModificado, dtoModificado);
     }
@@ -238,7 +243,7 @@ public class DepositoController implements Initializable {
             return;
         }
         try {
-            cantidad = Dialogs.agregarStock();
+            cantidad = Dialogs.inputStock();
             if (cantidad == null) {
                 return;
             }
