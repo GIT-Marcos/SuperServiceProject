@@ -76,6 +76,10 @@ public class ManejadorInputs {
         return Math.round(d * 100.0) / 100.0;
     }
 
+    private static Long convierteLong(String input) {
+        return Long.valueOf(input);
+    }
+
     private static void lanzaExcepcionNroNegativo() {
         throw new IllegalArgumentException("El N° ingresado no puede ser nagativo.");
     }
@@ -102,6 +106,23 @@ public class ManejadorInputs {
             verificaNegativo(result);
         }
         return result;
+    }
+
+    //provisorio hasta agregar la separación del id de la venta y su código
+    public static Long codigoVenta(String input, boolean esObligatorio) {
+        if (input == null) {
+            throw new NullPointerException("el código de venta es nulo.");
+        }
+        Long codigo = 0L;
+        char[] chars = input.toCharArray();
+        if (esObligatorio) {
+            verificaVacio(chars);
+        }
+        if (chars.length > 0) {
+            codigo = convierteLong(input);
+            verificaNegativo(codigo);
+        }
+        return codigo;
     }
 
     public static BigDecimal porcentaje(Integer input, boolean esObligatorio) {

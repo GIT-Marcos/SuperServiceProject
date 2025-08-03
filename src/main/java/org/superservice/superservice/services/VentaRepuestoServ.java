@@ -7,12 +7,11 @@ import org.superservice.superservice.entities.VentaRepuesto;
 import org.superservice.superservice.enums.EstadoVentaRepuesto;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
 /**
- *
  * @author Usuario
  */
 public class VentaRepuestoServ {
@@ -23,10 +22,10 @@ public class VentaRepuestoServ {
         return dao.todasVentas();
     }
 
-    public Map<String, BigDecimal> totalVentasPorMeses(Integer anio){
+    public Map<String, BigDecimal> totalVentasPorMeses(Integer anio) {
         return dao.totalVentasPorMeses(anio);
     }
-    
+
     public Map<String, Long> cantidadVentasPorMeses(Integer anio) {
         return dao.cantidadVentasPorMeses(anio);
     }
@@ -39,20 +38,29 @@ public class VentaRepuestoServ {
     }
 
     /**
-     *
      * @param tipoOrden pasar nulo si no importa el orden
      * @return
      */
-    public List<VentaRepuesto> buscarVentas(Long codVenta, EstadoVentaRepuesto estadoVenta,
-            BigDecimal montoMinimo, BigDecimal montomaximo, String nombreColumnaOrnenar,
-            Integer tipoOrden, Date fechaMinima, Date fechaMaxima) {
+    //todo: verificar si los parámetros vienen nulos.
+    public List<VentaRepuesto> buscarVentas(Long codVenta, List<EstadoVentaRepuesto> estadosVenta,
+                                            BigDecimal montoMinimo, BigDecimal montomaximo, String nombreColumnaOrnenar,
+                                            Integer tipoOrden, LocalDate fechaMinima, LocalDate fechaMaxima) {
+        if (codVenta == 0L) {
+            codVenta = null;
+        }
         if (nombreColumnaOrnenar == null) {
             nombreColumnaOrnenar = "id";
         }
         if (tipoOrden == null) {
             tipoOrden = 0;
         }
-        return dao.buscarVentas(codVenta, estadoVenta, montoMinimo, montomaximo, nombreColumnaOrnenar,
+        if (montoMinimo.compareTo(BigDecimal.ZERO) == 0) {
+            montoMinimo = null;
+        }
+        if (montomaximo.compareTo(BigDecimal.ZERO) == 0) {
+            montomaximo = null;
+        }
+        return dao.buscarVentas(codVenta, estadosVenta, montoMinimo, montomaximo, nombreColumnaOrnenar,
                 tipoOrden, fechaMinima, fechaMaxima);
     }
 

@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 //TODO: ver si quitar los setters q no se usan rompe hibernate
+//TODO: separar el código de la venta (id) y agregar código de factura con letras y números.
 @Entity
 @Table(name = "ventas_repuestos")
 public class VentaRepuesto implements Serializable {
@@ -146,6 +147,7 @@ public class VentaRepuesto implements Serializable {
         pago.setVentaRepuesto(this);
 
         this.montoFaltante = this.montoFaltante.subtract(pago.getMontoPagado());
+        calcularEstadoVenta();
         if (this.montoFaltante.compareTo(BigDecimal.ZERO) < 0) {
             this.montoFaltante = BigDecimal.ZERO;
         }

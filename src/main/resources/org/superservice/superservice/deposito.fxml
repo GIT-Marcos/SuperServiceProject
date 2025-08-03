@@ -20,9 +20,14 @@
    <left>
       <VBox alignment="TOP_CENTER" prefHeight="410.0" prefWidth="170.0" style="-fx-background-color: #20783f;" BorderPane.alignment="CENTER">
          <children>
+            <Separator prefWidth="200.0">
+               <VBox.margin>
+                  <Insets bottom="10.0" />
+               </VBox.margin>
+            </Separator>
             <Button fx:id="btnTodosRepuestos" mnemonicParsing="false" onAction="#todosRepuestos" prefHeight="30.0" prefWidth="150.0" text="Todos los repuestos">
                <VBox.margin>
-                  <Insets top="10.0" />
+                  <Insets />
                </VBox.margin></Button>
             <Button fx:id="btnNuevoRepuesto" mnemonicParsing="false" onAction="#nuevoRepuesto" prefHeight="30.0" prefWidth="150.0" text="Nuevo repuesto">
                <VBox.margin>
@@ -90,6 +95,9 @@
                </VBox.margin>
             </Button>
          </children>
+         <padding>
+            <Insets bottom="5.0" />
+         </padding>
       </VBox>
    </left>
    <center>
@@ -106,7 +114,7 @@
       </TableView>
    </center>
    <top>
-      <GridPane alignment="CENTER" prefHeight="100.0" style="-fx-background-color: #04702a;" BorderPane.alignment="CENTER">
+      <GridPane alignment="CENTER" prefHeight="100.0" style="-fx-background-color: #20783f;" BorderPane.alignment="CENTER">
         <columnConstraints>
           <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
