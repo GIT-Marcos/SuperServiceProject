@@ -20,6 +20,9 @@ public class InicioController {
     private Button btnNuevaVenta;
 
     @FXML
+    private Button btnVentas;
+
+    @FXML
     private void setBtnDeposito(ActionEvent event) {
         try {
             Navegador.cambiarEscena("/org/superservice/superservice/deposito.fxml", (Node) event.getSource());
@@ -32,6 +35,15 @@ public class InicioController {
     private void nuevaVenta(ActionEvent event) {
         try {
             Navegador.cambiarEscena("/org/superservice/superservice/nuevaVenta.fxml", (Node) event.getSource());
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void ventas(ActionEvent event) {
+        try {
+            Navegador.cambiarEscena("/org/superservice/superservice/ventas.fxml", (Node) event.getSource());
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }

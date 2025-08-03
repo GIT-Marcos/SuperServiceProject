@@ -18,7 +18,7 @@
   </rowConstraints>
    <children>
       <Button fx:id="btnDeposito" maxHeight="40.0" maxWidth="120.0" minHeight="40.0" minWidth="120.0" mnemonicParsing="false" onAction="#setBtnDeposito" prefHeight="40.0" prefWidth="120.0" text="Depósito" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
-      <Button maxHeight="40.0" maxWidth="120.0" minHeight="40.0" minWidth="120.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="120.0" text="Ventas" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+      <Button fx:id="btnVentas" maxHeight="40.0" maxWidth="120.0" minHeight="40.0" minWidth="120.0" mnemonicParsing="false" onAction="#ventas" prefHeight="40.0" prefWidth="120.0" text="Ventas" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
       <Button fx:id="btnNuevaVenta" maxHeight="40.0" maxWidth="120.0" minHeight="40.0" minWidth="120.0" mnemonicParsing="false" onAction="#nuevaVenta" prefHeight="40.0" prefWidth="120.0" text="Nueva Venta" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
       <Button maxHeight="40.0" maxWidth="120.0" minHeight="40.0" minWidth="120.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="120.0" text="Vehículos" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
    </children>

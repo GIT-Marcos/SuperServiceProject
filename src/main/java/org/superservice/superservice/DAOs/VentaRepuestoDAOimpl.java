@@ -6,9 +6,9 @@ import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +20,6 @@ import org.superservice.superservice.utilities.Util;
 import static org.superservice.superservice.enums.EstadoVentaRepuesto.CANCELADO;
 
 /**
- *
  * @author Usuario
  */
 public class VentaRepuestoDAOimpl implements VentaRepuestoDAO {
@@ -37,9 +36,9 @@ public class VentaRepuestoDAOimpl implements VentaRepuestoDAO {
     }
 
     @Override
-    public List<VentaRepuesto> buscarVentas(Long codVenta, EstadoVentaRepuesto estadoVenta,
-            BigDecimal montoMinimo, BigDecimal montomaximo, String nombreColumnaOrnenar,
-            Integer tipoOrden, Date fechaMinima, Date fechaMaxima) {
+    public List<VentaRepuesto> buscarVentas(Long codVenta, List<EstadoVentaRepuesto> estadosVenta,
+                                            BigDecimal montoMinimo, BigDecimal montomaximo, String nombreColumnaOrnenar,
+                                            Integer tipoOrden, LocalDate fechaMinima, LocalDate fechaMaxima) {
         session = Util.getHibernateSession();
 
         CriteriaBuilder cb = session.getCriteriaBuilder();
@@ -55,27 +54,11 @@ public class VentaRepuestoDAOimpl implements VentaRepuestoDAO {
         if (codVenta != null) {
             filtros.add(cb.equal(root.get("id"), String.valueOf(codVenta)));
         }
+
         //SI SE BUSCA UN ESTADO != DE CUALQUIERA...
-        if (estadoVenta != null) {
-            switch (estadoVenta) {
-                case PRESUPUESTANDO: //se eligió cod barra
-                    filtros.add(cb.like(root.get("estadoVenta"), EstadoVentaRepuesto.PRESUPUESTANDO.toString()));
-                    break;
-                case PENDIENTE_PAGO:
-                    filtros.add(cb.like(root.get("estadoVenta"), EstadoVentaRepuesto.PENDIENTE_PAGO.toString()));
-                    break;
-                case PAGADO:
-                    filtros.add(cb.like(root.get("estadoVenta"), EstadoVentaRepuesto.PAGADO.toString()));
-                    break;
-                case CANCELADO: //se eligió detalle
-                    filtros.add(cb.like(root.get("estadoVenta"), CANCELADO.toString()));
-                    break;
-                default:
-                    throw new IllegalArgumentException("Error en el estado de la venta:"
-                            + " error en el estado de la búsqueda de la venta.");
-            }
+        if (estadosVenta != null && !estadosVenta.isEmpty()) {
+            filtros.add(root.get("estadoVenta").in(estadosVenta));
         }
-        //FILTROS DE LA FECHA
 
         //FILTROS DEL MONTO
         if (montoMinimo != null && montomaximo != null) {
@@ -110,17 +93,17 @@ public class VentaRepuestoDAOimpl implements VentaRepuestoDAO {
     public Map<String, Long> cantidadVentasPorMeses(Integer anio) {
         session = Util.getHibernateSession();
         List<Object[]> objetos = session.createQuery("SELECT MONTH(v.fechaVenta), COUNT(v) "
-                + "FROM VentaRepuesto v "
-                + "WHERE YEAR(v.fechaVenta) = :anio "
-                + "AND v.activo = true "
-                + "GROUP BY MONTH(v.fechaVenta) "
-                + "ORDER BY MONTH(v.fechaVenta)",
-                Object[].class)
+                                + "FROM VentaRepuesto v "
+                                + "WHERE YEAR(v.fechaVenta) = :anio "
+                                + "AND v.activo = true "
+                                + "GROUP BY MONTH(v.fechaVenta) "
+                                + "ORDER BY MONTH(v.fechaVenta)",
+                        Object[].class)
                 .setParameter("anio", anio)
                 .list();
         String[] meses = {
-            "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-            "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+                "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+                "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
         };
         Map<String, Long> ventasPorMes = new LinkedHashMap<>();
         // Inicializa con 0 para todos los meses
@@ -141,19 +124,19 @@ public class VentaRepuestoDAOimpl implements VentaRepuestoDAO {
     public Map<String, BigDecimal> totalVentasPorMeses(Integer anio) {
         session = Util.getHibernateSession();
         List<Object[]> objetos = session.createQuery("SELECT MONTH(v.fechaVenta), SUM(v.montoTotal) "
-                + "FROM VentaRepuesto v "
-                + "WHERE YEAR(v.fechaVenta) = :anio "
-                + "AND v.activo = true "
-                + "GROUP BY MONTH(v.fechaVenta) "
-                + "ORDER BY MONTH(v.fechaVenta)",
-                Object[].class)
+                                + "FROM VentaRepuesto v "
+                                + "WHERE YEAR(v.fechaVenta) = :anio "
+                                + "AND v.activo = true "
+                                + "GROUP BY MONTH(v.fechaVenta) "
+                                + "ORDER BY MONTH(v.fechaVenta)",
+                        Object[].class)
                 .setParameter("anio", anio)
                 .list();
         String[] meses = {
-            "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-            "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+                "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+                "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
         };
-        
+
         Map<String, BigDecimal> ventasPorMes = new LinkedHashMap<>();
         // Inicializa con 0 para todos los meses
         for (int i = 0; i < 12; i++) {
@@ -168,7 +151,7 @@ public class VentaRepuestoDAOimpl implements VentaRepuestoDAO {
         session.close();
         return ventasPorMes;
     }
-    
+
     @Override
     public VentaRepuesto cargarVenta(VentaRepuesto venta) {
         session = Util.getHibernateSession();

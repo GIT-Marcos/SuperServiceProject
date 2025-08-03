@@ -26,82 +26,56 @@ import java.util.ResourceBundle;
 public class DepositoController implements Initializable {
 
     private final RepuestoServ repuestoServ = new RepuestoServ();
-
     private final StockServ stockServ = new StockServ();
-
     private List<Repuesto> repuestos;
-
     private ObservableList<RepuestoDTOtabla> repuestosTabla = FXCollections.observableArrayList();
 
     @FXML
     private TableView<RepuestoDTOtabla> tablaRepuestos;
-
     @FXML
     private TableColumn<RepuestoDTOtabla, String> colCodBarra;
-
     @FXML
     private TableColumn<RepuestoDTOtabla, String> colDetalle;
-
     @FXML
     private TableColumn<RepuestoDTOtabla, String> colMarca;
-
     @FXML
     private TableColumn<RepuestoDTOtabla, String> colPrecio;
-
     @FXML
     private TableColumn<RepuestoDTOtabla, String> colCantidad;
-
     @FXML
     private TableColumn<RepuestoDTOtabla, String> colCantidadMinima;
-
     @FXML
     private TableColumn<RepuestoDTOtabla, String> colUniMedida;
-
     @FXML
     private ComboBox<String> comboBuscarPor;
-
     @FXML
     private ComboBox<String> comboOrdenarPor;
-
     @FXML
     private ComboBox<String> comboTipoOrden;
-
     @FXML
     private CheckBox checkMostrarNormal;
-
     @FXML
     private CheckBox checkMostrarBajo;
-
     @FXML
     private TextField fieldBuscar;
-
     @FXML
     private Button butBuscar;
-
     @FXML
     private Button btnTodosRepuestos;
-
     @FXML
     private Button btnNuevoRepuesto;
-
     @FXML
     private Button btnBorrarRepuesto;
-
     @FXML
     private Button btnModRepuesto;
-
     @FXML
     private Button btnIngresarStock;
-
     @FXML
     private Button btnRetiradosEnMes;
-
     @FXML
     private Button btnVolver;
-
     @FXML
     private Label labelAvisoStock;
-
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
