@@ -8,13 +8,17 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import org.hibernate.HibernateException;
 import org.superservice.superservice.DTOs.VentaRepuestoDTOtabla;
+import org.superservice.superservice.entities.Usuario;
 import org.superservice.superservice.entities.VentaRepuesto;
 import org.superservice.superservice.enums.EstadoVentaRepuesto;
+import org.superservice.superservice.services.UsuarioServ;
 import org.superservice.superservice.services.VentaRepuestoServ;
 import org.superservice.superservice.utilities.ManejadorInputs;
 import org.superservice.superservice.utilities.Navegador;
 import org.superservice.superservice.utilities.alertas.Alertas;
+import org.superservice.superservice.utilities.dialogs.Dialogs;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -27,6 +31,8 @@ public class VentasController implements Initializable {
     private List<VentaRepuesto> ventasRepuestos;
     private ObservableList<VentaRepuestoDTOtabla> listaDTOsVentas = FXCollections.observableArrayList();
     private VentaRepuestoServ ventaRepuestoServ = new VentaRepuestoServ();
+
+    private UsuarioServ usuarioServ = new UsuarioServ();
 
     @FXML
     private TextField tfBuscar;
@@ -132,15 +138,10 @@ public class VentasController implements Initializable {
 
     @FXML
     private void verDetalles(ActionEvent event) {
-        VentaRepuesto venta;
-        VentaRepuestoDTOtabla dtoSelecionado = tablaVentas.getSelectionModel().getSelectedItem();
-        if (dtoSelecionado == null) {
-            Alertas.aviso("Detalles de venta", "Debe seleccionar una venta de la" +
-                    " tabla para ver sus detalles.");
+        VentaRepuesto venta = tomarVentaDeTabla();
+        if (venta == null) {
             return;
         }
-        venta = this.ventasRepuestos.stream().filter(v ->
-                v.getId().equals(dtoSelecionado.getCodVenta())).findFirst().orElse(new VentaRepuesto());
         try {
             Navegador.abrirModal("/org/superservice/superservice/detallesVenta.fxml",
                     (Node) event.getSource(), "Detalles de venta",
@@ -149,7 +150,6 @@ public class VentasController implements Initializable {
                     });
         } catch (IOException ioe) {
             ioe.printStackTrace();
-            return;
         }
     }
 
@@ -159,7 +159,38 @@ public class VentasController implements Initializable {
 
     @FXML
     private void cancelarVenta(ActionEvent event) {
-
+        VentaRepuesto venta = tomarVentaDeTabla();
+        if (venta == null) {
+            return;
+        }
+        VentaRepuestoDTOtabla dtoParaActualizar = tablaVentas.getSelectionModel().getSelectedItem();
+        int index = listaDTOsVentas.indexOf(dtoParaActualizar);
+        Usuario usuario = usuarioServ.buscarUsuario(1L);
+        String motivo;
+        try {
+            motivo = Dialogs.motivoBorrado();
+        } catch (NullPointerException | IllegalArgumentException e) {
+            Alertas.aviso("Cancelación de venta", e.getMessage());
+            return;
+        }
+        if (motivo == null) {
+            return;
+        }
+        boolean confirmacion = Alertas.confirmacion("Cancelación de venta", "Esta acción es irreversible,\n" +
+                "¿Confirmar el borrado de venta?");
+        if (!confirmacion) {
+            return;
+        } else {
+            try {
+                venta = ventaRepuestoServ.borradoLogico(venta, motivo, usuario);
+            } catch (HibernateException he) {
+                Alertas.aviso("Cancelación de venta", he.getMessage());
+                return;
+            }
+        }
+        VentaRepuestoDTOtabla dtoActualizado = new VentaRepuestoDTOtabla(venta);
+        listaDTOsVentas.set(index, dtoActualizado);
+        Alertas.exito("Cancelación de venta", "Se ha cancelado la venta con éxito.");
     }
 
     @FXML
@@ -170,6 +201,18 @@ public class VentasController implements Initializable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    //todo: hacer este un método que maneje genéricos para reutilizar
+    private VentaRepuesto tomarVentaDeTabla() {
+        VentaRepuestoDTOtabla dtoSelecionado = tablaVentas.getSelectionModel().getSelectedItem();
+        if (dtoSelecionado == null) {
+            Alertas.aviso("Detalles de venta", "Debe seleccionar una venta de la" +
+                    " tabla para ver sus detalles.");
+            return null;
+        }
+        return this.ventasRepuestos.stream().filter(v ->
+                v.getId().equals(dtoSelecionado.getCodVenta())).findFirst().orElse(new VentaRepuesto());
     }
 
     private List<EstadoVentaRepuesto> tomarEstados() {

@@ -30,5 +30,5 @@ public interface VentaRepuestoDAO {
 
     VentaRepuesto modificarVenta(VentaRepuesto venta);
 
-    Boolean borradoLogico(Long idVenta, String motivo, Usuario usuario);
+    VentaRepuesto borradoLogico(Long idVenta, String motivo, Usuario usuario);
 }

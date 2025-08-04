@@ -158,7 +158,7 @@ public class DepositoController implements Initializable {
             return;
         }
         int indexModificado = this.repuestosTabla.indexOf(dtoSeleccionado);
-        //todo:devolver el repuesto recien cargardo y agregarlo a la lista de clase
+        //todo: devolver el repuesto recién cargado y agregarlo a la lista de clase
         RepuestoDTOtabla dtoModificado = new RepuestoDTOtabla(controller.getRepuestoCargado());
         this.repuestosTabla.set(indexModificado, dtoModificado);
     }
