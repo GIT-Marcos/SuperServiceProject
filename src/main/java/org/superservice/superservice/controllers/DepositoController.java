@@ -137,27 +137,21 @@ public class DepositoController implements Initializable {
 
     @FXML
     private void modRepuesto(ActionEvent event) {
-        boolean resultado;
         CargarRepuestoController controller;
-        Repuesto repModi = null;
+        Repuesto repModi;
 
         RepuestoDTOtabla dtoSeleccionado = tablaRepuestos.getSelectionModel().getSelectedItem();
         if (dtoSeleccionado == null) {
             Alertas.aviso("Modificar repuesto", "Debe seleccionar un repuesto para modificar.");
             return;
         }
-        for (Repuesto r : this.repuestos) {
-            if (r.getId().equals(dtoSeleccionado.getId())) {
-                repModi = r;
-                break;
-            }
-        }
+        repModi = this.repuestos.stream().filter(r ->
+                r.getId().equals(dtoSeleccionado.getId())).findFirst().orElse(new Repuesto());
         try {
-            Repuesto finalRepModi = repModi;
             controller = Navegador.abrirModal("/org/superservice/superservice/cargarRepuesto.fxml",
                     (Node) event.getSource(), "Modificar repuesto",
                     (CargarRepuestoController ctlr) -> {
-                        ctlr.llenarCamposParaModificacionRepuesto(finalRepModi);
+                        ctlr.llenarCamposParaModificacionRepuesto(repModi);
                     });
         } catch (IOException ioe) {
             Alertas.aviso("Carga de repuesto", "Error al intentar abrir la ventana.");

@@ -17,9 +17,9 @@ public class DetalleRetiroVentaDTO {
     public DetalleRetiroVentaDTO(DetalleRetiro d) {
         this.nombre = new SimpleStringProperty(d.getRepuesto().getDetalle());
         this.marca = new SimpleStringProperty(d.getRepuesto().getMarca());
-        this.precioUnitario = new SimpleStringProperty(String.valueOf(d.getRepuesto().getPrecio()));
+        this.precioUnitario = new SimpleStringProperty("$ " + d.getRepuesto().getPrecio());
         this.cantidadVendida = new SimpleDoubleProperty(d.getCantidad());
-        this.subTotal = new SimpleStringProperty(String.valueOf(d.getSubTotal()));
+        this.subTotal = new SimpleStringProperty("$ "+ d.getSubTotal());
     }
 
     public String getNombre() {

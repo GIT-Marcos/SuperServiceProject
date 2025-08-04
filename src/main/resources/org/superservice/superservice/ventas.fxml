@@ -172,7 +172,7 @@
                   <Font size="13.0" />
                </font>
             </Label>
-            <CheckBox fx:id="checkPendiente" mnemonicParsing="false" selected="true" text="Pendiente pago" textAlignment="JUSTIFY" textFill="WHITE" wrapText="true" GridPane.columnIndex="4" GridPane.rowIndex="1">
+            <CheckBox mnemonicParsing="false" selected="true" text="Pendiente pago" textAlignment="JUSTIFY" textFill="WHITE" wrapText="true" GridPane.columnIndex="4" GridPane.rowIndex="1">
                <GridPane.margin>
                   <Insets left="5.0" />
                </GridPane.margin>

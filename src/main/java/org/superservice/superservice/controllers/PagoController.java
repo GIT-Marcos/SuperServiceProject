@@ -130,7 +130,7 @@ public class PagoController implements Initializable {
         this.pago.setActivo(true);
         this.pago.setFechaPago(LocalDate.now());
         this.pago.setDni(null);
-        this.pago.setMetodosPago(metodosPago);
+        this.pago.setMetodoPago(metodosPago);
         this.pago.setDescuento(porcentajeDescuento);
         this.pago.setMontoPagado(montoPagar);
         this.pago.setMarcaTarjeta(marcaTarjeta);

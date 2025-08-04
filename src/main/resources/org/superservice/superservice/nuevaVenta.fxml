@@ -121,10 +121,10 @@
             </Label>
             <TableView fx:id="tablaDetallesVenta" prefWidth="490.0">
               <columns>
-                <TableColumn fx:id="colDetNombre" prefWidth="152.59704965353012" text="Nombre" />
-                <TableColumn fx:id="colDetMarca" prefWidth="109.61186218261719" text="Marca" />
-                  <TableColumn fx:id="colDetPrecioUni" prefWidth="83.8209228515625" text="Precio Uni." />
-                  <TableColumn fx:id="colDetCantidad" prefWidth="66.6268310546875" text="Cantidad" />
+                <TableColumn fx:id="colDetNombre" prefWidth="123.94037240743637" text="Nombre" />
+                <TableColumn fx:id="colDetMarca" prefWidth="120.35821533203125" text="Marca repuesto" />
+                  <TableColumn fx:id="colDetPrecioUni" prefWidth="79.52232360839844" text="Precio Uni." />
+                  <TableColumn fx:id="colDetCantidad" prefWidth="90.2686767578125" text="Cantidad ven." />
                   <TableColumn fx:id="colDetSubTotal" prefWidth="77.3731689453125" text="Sub-total" />
               </columns>
             </TableView>
