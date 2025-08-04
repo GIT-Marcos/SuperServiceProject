@@ -6,13 +6,15 @@ import javafx.scene.control.TextInputDialog;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.superservice.superservice.utilities.ManejadorInputs;
+import org.superservice.superservice.utilities.alertas.Alertas;
+
 import java.io.File;
 import java.util.Optional;
 
 public class Dialogs {
 
     public static File selectorRuta(ActionEvent event, String titulo, String nombreDefecto,
-                               FileChooser.ExtensionFilter extensiones) {
+                                    FileChooser.ExtensionFilter extensiones) {
         Node n = ((Node) event.getSource());
         Stage s = (Stage) n.getScene().getWindow();
         File file;
@@ -23,6 +25,30 @@ public class Dialogs {
         fileChooser.getExtensionFilters().add(extensiones);
         file = fileChooser.showSaveDialog(s);
         return file;
+    }
+
+    //esto es auxiliar hasta implementación de JasperReports
+    public static Integer selectorFechaReporte() {
+        Integer fecha;
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Generar reporte");
+        dialog.setHeaderText("Ingrese el número del año para el reporte. \n" +
+                "Ej: 2025");
+        dialog.setContentText("Año: ");
+
+        Optional<String> opt = dialog.showAndWait();
+        //si se cierra la ventana
+        if (opt.isEmpty()) {
+            return null;
+        }
+        String input = opt.get().trim();
+        try {
+            fecha = Integer.valueOf(input);
+        } catch (NumberFormatException e) {
+            Alertas.aviso("Generar reporte", "Formato no válido");
+            return null;
+        }
+        return fecha;
     }
 
     public static Double inputStock() {

@@ -6,6 +6,7 @@ module org.superservice.superservice {
     requires org.apache.poi.ooxml;
     requires com.github.librepdf.openpdf;
     requires java.desktop;
+    requires org.jfree.jfreechart;
 
 
     opens org.superservice.superservice to javafx.fxml;
