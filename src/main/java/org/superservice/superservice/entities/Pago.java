@@ -57,7 +57,7 @@ public class Pago implements Serializable {
     //ENUM MÉTO DO DE PAGO
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false, name = "metodo_pago")
-    private MetodosPago MetodosPago;
+    private MetodosPago MetodoPago;
 
     //ENUM BANCO
     //ENUM ESTADO PAGO
@@ -70,8 +70,8 @@ public class Pago implements Serializable {
     }
 
     public Pago(Long id, String dni, LocalDate fechaPago, BigDecimal montoPagado, String marcaTarjeta,
-            String banco, String referencia, BigDecimal descuento, String ultimos4, Boolean activo,
-            MetodosPago MetodosPago, VentaRepuesto ventaRepuesto) {
+                String banco, String referencia, BigDecimal descuento, String ultimos4, Boolean activo,
+                MetodosPago MetodoPago, VentaRepuesto ventaRepuesto) {
         this.id = id;
         this.dni = dni;
         this.fechaPago = fechaPago;
@@ -82,7 +82,7 @@ public class Pago implements Serializable {
         this.descuento = descuento;
         this.ultimos4 = ultimos4;
         this.activo = activo;
-        this.MetodosPago = MetodosPago;
+        this.MetodoPago = MetodoPago;
         this.ventaRepuesto = ventaRepuesto;
     }
 
@@ -166,12 +166,12 @@ public class Pago implements Serializable {
         this.activo = activo;
     }
 
-    public MetodosPago getMetodosPago() {
-        return MetodosPago;
+    public MetodosPago getMetodoPago() {
+        return MetodoPago;
     }
 
-    public void setMetodosPago(MetodosPago MetodosPago) {
-        this.MetodosPago = MetodosPago;
+    public void setMetodoPago(MetodosPago MetodosPago) {
+        this.MetodoPago = MetodosPago;
     }
 
     public VentaRepuesto getVentaRepuesto() {
@@ -184,7 +184,7 @@ public class Pago implements Serializable {
 
     @Override
     public String toString() {
-        return "Pago{" + "id=" + id + ", dni=" + dni + ", fechaPago=" + fechaPago + ", montoPagado=" + montoPagado + ", marcaTarjeta=" + marcaTarjeta + ", banco=" + banco + ", referencia=" + referencia + ", descuento=" + descuento + ", ultimos4=" + ultimos4 + ", activo=" + activo + ", MetodosPago=" + MetodosPago + '}';
+        return "Pago{" + "id=" + id + ", dni=" + dni + ", fechaPago=" + fechaPago + ", montoPagado=" + montoPagado + ", marcaTarjeta=" + marcaTarjeta + ", banco=" + banco + ", referencia=" + referencia + ", descuento=" + descuento + ", ultimos4=" + ultimos4 + ", activo=" + activo + ", MetodosPago=" + MetodoPago + '}';
     }
 
 }

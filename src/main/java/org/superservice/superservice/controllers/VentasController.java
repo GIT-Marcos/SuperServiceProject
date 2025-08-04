@@ -132,6 +132,25 @@ public class VentasController implements Initializable {
 
     @FXML
     private void verDetalles(ActionEvent event) {
+        VentaRepuesto venta;
+        VentaRepuestoDTOtabla dtoSelecionado = tablaVentas.getSelectionModel().getSelectedItem();
+        if (dtoSelecionado == null) {
+            Alertas.aviso("Detalles de venta", "Debe seleccionar una venta de la" +
+                    " tabla para ver sus detalles.");
+            return;
+        }
+        venta = this.ventasRepuestos.stream().filter(v ->
+                v.getId().equals(dtoSelecionado.getCodVenta())).findFirst().orElse(new VentaRepuesto());
+        try {
+            Navegador.abrirModal("/org/superservice/superservice/detallesVenta.fxml",
+                    (Node) event.getSource(), "Detalles de venta",
+                    (DetallesVentaController ctlr) -> {
+                        ctlr.pasarVenta(venta);
+                    });
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+            return;
+        }
     }
 
     @FXML

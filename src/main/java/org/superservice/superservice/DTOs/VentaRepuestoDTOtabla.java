@@ -13,11 +13,11 @@ public class VentaRepuestoDTOtabla {
     private final StringProperty fechaVenta;
     private final StringProperty montoVenta;
 
-    public VentaRepuestoDTOtabla(VentaRepuesto ventaRepuesto) {
-        this.codVenta = new SimpleLongProperty(ventaRepuesto.getId());
-        this.estadoVenta = new SimpleStringProperty(ventaRepuesto.getEstadoVenta().toString());
-        this.fechaVenta = new SimpleStringProperty(ventaRepuesto.getFechaVenta().toString());
-        this.montoVenta = new SimpleStringProperty(String.valueOf(ventaRepuesto.getMontoTotal()));
+    public VentaRepuestoDTOtabla(VentaRepuesto v) {
+        this.codVenta = new SimpleLongProperty(v.getId());
+        this.estadoVenta = new SimpleStringProperty(v.getEstadoVenta().toString());
+        this.fechaVenta = new SimpleStringProperty(v.getFechaVenta().toString());
+        this.montoVenta = new SimpleStringProperty("$ "+ v.getMontoTotal());
     }
 
     public long getCodVenta() {
