@@ -172,7 +172,7 @@ public class VentaRepuestoDAOimpl implements VentaRepuestoDAO {
         session = Util.getHibernateSession();
         try {
             session.beginTransaction();
-            session.merge(venta);
+            venta = session.merge(venta);
             session.getTransaction().commit();
         } catch (Exception e) {
             e.printStackTrace();

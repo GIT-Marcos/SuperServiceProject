@@ -31,7 +31,6 @@ public class VentasController implements Initializable {
     private List<VentaRepuesto> ventasRepuestos;
     private ObservableList<VentaRepuestoDTOtabla> listaDTOsVentas = FXCollections.observableArrayList();
     private VentaRepuestoServ ventaRepuestoServ = new VentaRepuestoServ();
-
     private UsuarioServ usuarioServ = new UsuarioServ();
 
     @FXML
@@ -142,15 +141,21 @@ public class VentasController implements Initializable {
         if (venta == null) {
             return;
         }
+        VentaRepuestoDTOtabla dtoSeleccionado = tablaVentas.getSelectionModel().getSelectedItem();
+        int index = listaDTOsVentas.indexOf(dtoSeleccionado);
+        DetallesVentaController controller;
         try {
-            Navegador.abrirModal("/org/superservice/superservice/detallesVenta.fxml",
+            controller = Navegador.abrirModal("/org/superservice/superservice/detallesVenta.fxml",
                     (Node) event.getSource(), "Detalles de venta",
                     (DetallesVentaController ctlr) -> {
                         ctlr.pasarVenta(venta);
                     });
         } catch (IOException ioe) {
             ioe.printStackTrace();
+            return;
         }
+        dtoSeleccionado = new VentaRepuestoDTOtabla(controller.tomarVenta());
+        this.listaDTOsVentas.set(index,dtoSeleccionado);
     }
 
     @FXML

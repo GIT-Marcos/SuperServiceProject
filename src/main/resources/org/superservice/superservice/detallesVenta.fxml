@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
-
+<?import javafx.scene.text.Font?>
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.superservice.superservice.controllers.DetallesVentaController">
    <children>
@@ -30,20 +30,38 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label text="Código de venta:" />
-            <Label fx:id="labelCodVenta" text="00 00000 000" GridPane.rowIndex="1" />
-            <Label text="Fecha de venta:" GridPane.rowIndex="2" />
-            <Label fx:id="labelFechaVenta" text="00/00/000" GridPane.rowIndex="3" />
-            <Label text="Monto total:" GridPane.rowIndex="4" />
-            <Label fx:id="labelMontoTotal" text="\$ 0" GridPane.rowIndex="5" />
-            <Label text="Estado venta:" GridPane.columnIndex="1" />
-            <Label fx:id="labelEstadoVenta" text="estado" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <Label text="Monto faltante:" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <Label fx:id="labelMontoFaltante" text="\$ 0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <Button fx:id="btnAgregarPago" mnemonicParsing="false" text="Agregar Pago" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <Label text="Código de venta:" GridPane.valignment="BOTTOM" />
+            <Label fx:id="labelCodVenta" text="00 00000 000" GridPane.rowIndex="1">
+               <font>
+                  <Font size="14.0" />
+               </font></Label>
+            <Label text="Fecha de venta:" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" />
+            <Label fx:id="labelFechaVenta" text="00/00/000" GridPane.rowIndex="3">
+               <font>
+                  <Font size="14.0" />
+               </font></Label>
+            <Label text="Monto total:" GridPane.rowIndex="4" GridPane.valignment="BOTTOM" />
+            <Label fx:id="labelMontoTotal" text="\$ 0" GridPane.rowIndex="5">
+               <font>
+                  <Font size="14.0" />
+               </font></Label>
+            <Label text="Estado venta:" GridPane.columnIndex="1" GridPane.valignment="BOTTOM" />
+            <Label fx:id="labelEstadoVenta" text="estado" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <font>
+                  <Font size="14.0" />
+               </font></Label>
+            <Label text="Monto faltante:" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" />
+            <Label fx:id="labelMontoFaltante" text="\$ 0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+               <font>
+                  <Font size="14.0" />
+               </font></Label>
+            <Button fx:id="btnAgregarPago" disable="true" mnemonicParsing="false" onAction="#agregarPago" prefHeight="30.0" prefWidth="130.0" text="Agregar Pago" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="5">
+               <font>
+                  <Font size="14.0" />
+               </font></Button>
          </children>
          <padding>
-            <Insets left="10.0" right="10.0" />
+            <Insets bottom="10.0" left="10.0" right="10.0" />
          </padding>
       </GridPane>
       <TabPane prefHeight="220.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
@@ -74,11 +92,11 @@
                             <TableColumn fx:id="colFechaPago" prefWidth="71.64178681373596" text="Fecha pago" />
                             <TableColumn fx:id="colMontoPago" prefWidth="98.14926147460938" text="Monto" />
                               <TableColumn fx:id="colMetodoPago" prefWidth="96.71638488769531" text="Método" />
-                              <TableColumn fx:id="colTarjetaPago" prefWidth="114.6268310546875" text="Tarjeta" />
-                              <TableColumn fx:id="colBancoTarjeta" prefWidth="110.328369140625" text="Banco" />
-                              <TableColumn fx:id="colDescuentoPago" prefWidth="68.77609252929688" text="Dto" />
-                              <TableColumn fx:id="colNroRefPago" prefWidth="80.95526123046875" text="N° ref" />
-                              <TableColumn fx:id="colUlt4Pago" prefWidth="63.76123046875" text="Últ. 4" />
+                              <TableColumn fx:id="colTarjetaPago" prefWidth="140.41790771484375" text="Tarjeta" />
+                              <TableColumn fx:id="colBancoTarjeta" prefWidth="85.25372314453125" text="Banco" />
+                              <TableColumn fx:id="colDescuentoPago" prefWidth="68.77609252929688" text="Dto %" />
+                              <TableColumn fx:id="colNroRefPago" prefWidth="90.26861572265625" text="N° ref" />
+                              <TableColumn fx:id="colUlt4Pago" prefWidth="55.88067626953125" text="Últ. 4" />
                           </columns>
                         </TableView>
                      </children>
