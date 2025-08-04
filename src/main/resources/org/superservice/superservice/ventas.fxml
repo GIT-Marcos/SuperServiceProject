@@ -64,12 +64,12 @@
                   <Font size="13.0" />
                </font>
             </Label>
-            <Button maxHeight="30.0" maxWidth="150.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="150.0" text="Total ventas anual">
+            <Button fx:id="btnTotalVentasAnual" maxHeight="30.0" maxWidth="150.0" mnemonicParsing="false" onAction="#totalVentasAnual" prefHeight="30.0" prefWidth="150.0" text="Total ventas anual">
                <VBox.margin>
                   <Insets bottom="10.0" />
                </VBox.margin>
             </Button>
-            <Button maxHeight="30.0" maxWidth="150.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="150.0" text="Cantidad ventas anual">
+            <Button fx:id="btnCantidadVentasAnual" maxHeight="30.0" maxWidth="150.0" mnemonicParsing="false" onAction="#cantidadVentasAnual" prefHeight="30.0" prefWidth="150.0" text="Cantidad ventas anual">
                <VBox.margin>
                   <Insets bottom="10.0" />
                </VBox.margin>
@@ -196,10 +196,10 @@
    <center>
       <TableView fx:id="tablaVentas" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <columns>
-          <TableColumn fx:id="colCodVenta" prefWidth="189.13433466363404" text="Código venta" />
-          <TableColumn fx:id="colEstadoVenta" prefWidth="174.08961486816406" text="Estado" />
-            <TableColumn fx:id="colFechaVenta" prefWidth="157.6119384765625" text="Fecha" />
-            <TableColumn fx:id="colMontoVenta" prefWidth="175.52239990234375" text="Monto" />
+          <TableColumn fx:id="colCodVenta" prefWidth="113.1940117876577" text="Código venta" />
+          <TableColumn fx:id="colEstadoVenta" prefWidth="135.4029541015625" text="Estado" />
+            <TableColumn fx:id="colFechaVenta" prefWidth="170.50746154785156" text="Fecha" />
+            <TableColumn fx:id="colMontoVenta" prefWidth="165.4925537109375" text="Monto" />
         </columns>
          <BorderPane.margin>
             <Insets />

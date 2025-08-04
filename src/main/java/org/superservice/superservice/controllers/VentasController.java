@@ -17,6 +17,7 @@ import org.superservice.superservice.enums.EstadoVentaRepuesto;
 import org.superservice.superservice.services.UsuarioServ;
 import org.superservice.superservice.services.VentaRepuestoServ;
 import org.superservice.superservice.utilities.GeneradorPDF;
+import org.superservice.superservice.utilities.GeneradorReportes;
 import org.superservice.superservice.utilities.ManejadorInputs;
 import org.superservice.superservice.utilities.Navegador;
 import org.superservice.superservice.utilities.alertas.Alertas;
@@ -78,6 +79,10 @@ public class VentasController implements Initializable {
     private Button btnImprimirFactura;
     @FXML
     private Button btnCancelarVenta;
+    @FXML
+    private Button btnTotalVentasAnual;
+    @FXML
+    private Button btnCantidadVentasAnual;
     @FXML
     private Button btnVolver;
 
@@ -184,6 +189,38 @@ public class VentasController implements Initializable {
             e.printStackTrace();
             return;
         }
+    }
+
+    @FXML
+    private void totalVentasAnual(ActionEvent event) {
+        Integer fecha = Dialogs.selectorFechaReporte();
+        if (fecha == null) {
+            return;
+        }
+        File file = Dialogs.selectorRuta(event, "Seleccione la ruta para la generación del reporte",
+                "reporte total ventas año " + fecha + ".jpg",
+                new FileChooser.ExtensionFilter("Imágenes JPG (*.jpg, *.jpeg)", "*.jpg", "*.jpeg"));
+        if (file == null) {
+            return;
+        }
+        Map<String, BigDecimal> datos = ventaRepuestoServ.totalVentasPorMeses(fecha);
+        GeneradorReportes.totalVentasAnual(file, datos);
+    }
+
+    @FXML
+    private void cantidadVentasAnual(ActionEvent event) {
+        Integer fecha = Dialogs.selectorFechaReporte();
+        if (fecha == null) {
+            return;
+        }
+        File file = Dialogs.selectorRuta(event, "Seleccione la ruta para la generación del reporte",
+                "reporte cantidad de ventas año " + fecha + ".jpg",
+                new FileChooser.ExtensionFilter("Imágenes JPG (*.jpg, *.jpeg)", "*.jpg", "*.jpeg"));
+        if (file == null) {
+            return;
+        }
+        Map<String, Long> datos = ventaRepuestoServ.cantidadVentasPorMeses(fecha);
+        GeneradorReportes.cantidadVentasAnual(file, datos);
     }
 
     @FXML
