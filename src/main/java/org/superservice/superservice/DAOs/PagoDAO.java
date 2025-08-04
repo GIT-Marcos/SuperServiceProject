@@ -11,6 +11,4 @@ public interface PagoDAO {
 
     Pago cargarNuevoPago(Pago pago);
     
-    Pago agregarPagoVentaPendientePago(Pago pago);
-    
 }

@@ -63,6 +63,7 @@ public class Pago implements Serializable {
     //ENUM ESTADO PAGO
     //RELACIÓN CON VENTAsERVICE
     //RELACIÓN BI CON VENTA REPUESTO
+    //todo: no valida optional
     @ManyToOne(optional = false)
     private VentaRepuesto ventaRepuesto;
 

@@ -10,6 +10,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import org.hibernate.HibernateException;
 import org.superservice.superservice.entities.Pago;
 import org.superservice.superservice.entities.VentaRepuesto;
 import org.superservice.superservice.enums.MetodosPago;
@@ -25,58 +26,41 @@ import java.util.ResourceBundle;
 public class PagoController implements Initializable {
 
     private VentaRepuesto venta;
-
     private Pago pago = new Pago();
-
     private VentaRepuestoServ ventaRepuestoServ = new VentaRepuestoServ();
-
     private boolean flagEstadoVenta = false;
+    private boolean flagAgregarPago = false;
 
     @FXML
     private Label labelTotal;
-
     @FXML
     private Spinner<Integer> spinDescuento;
-
     @FXML
     private ToggleGroup radiosFormaPago;
-
     @FXML
     private RadioButton radTarjCredito;
-
     @FXML
     private RadioButton radTarjDebito;
-
     @FXML
     private RadioButton radEfectivo;
-
     @FXML
     private RadioButton radTransferencia;
-
     @FXML
     private TextField tfMonto;
-
     @FXML
     private ComboBox<String> comboMarcaTarjeta;
-
     @FXML
     private ComboBox<String> comboBancoTarjeta;
-
     @FXML
     private TextField tfUltimos4;
-
     @FXML
     private TextField tfNroReferencia;
-
     @FXML
     private Label labelMontoPago;
-
     @FXML
     private Button btnPagar;
-
     @FXML
     private Button btnVolver;
-
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -142,8 +126,18 @@ public class PagoController implements Initializable {
         boolean confirmacion = Alertas.confirmacion("¿Pagar?", "¿Continuar con el pago?\n" +
                 "El total a pagar con descuentos incluidos serán: $ " + montoPagar);
         if (confirmacion) {
-            VentaRepuesto ventaCargada = ventaRepuestoServ.cargarVenta(this.venta);
-            Alertas.exito("Pago", "Venta y pago cargados con éxito.");
+            try {
+                if (!this.flagAgregarPago) {
+                    ventaRepuestoServ.cargarVenta(this.venta);
+                    Alertas.exito("Pago", "Venta y pago cargados con éxito.");
+                } else {
+                    this.venta = ventaRepuestoServ.modificarVenta(this.venta);
+                    Alertas.exito("Pago", "Pago cargado a venta correctamente.");
+                }
+            } catch (HibernateException e) {
+                Alertas.error("Pago", e.getMessage());
+                return;
+            }
             this.flagEstadoVenta = true;
             volver(event);
         }
@@ -190,7 +184,11 @@ public class PagoController implements Initializable {
 
     public void pasarVenta(VentaRepuesto venta) {
         this.venta = venta;
-        labelTotal.setText("TOTAL: $ " + venta.getMontoTotal());
+        labelTotal.setText("TOTAL: $ " + venta.getMontoFaltante());
+        // la venta ya cargada tiene id creado por Hibernate
+        if (venta.getId() != null) {
+            this.flagAgregarPago = true;
+        }
     }
 
     private void llenarCombos() {
@@ -224,4 +222,7 @@ public class PagoController implements Initializable {
         return this.flagEstadoVenta;
     }
 
+    public VentaRepuesto tomarVentaCargada() {
+        return this.venta;
+    }
 }

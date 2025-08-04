@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -15,7 +16,11 @@ import org.superservice.superservice.DTOs.PagosDTOtabla;
 import org.superservice.superservice.entities.DetalleRetiro;
 import org.superservice.superservice.entities.Pago;
 import org.superservice.superservice.entities.VentaRepuesto;
+import org.superservice.superservice.enums.EstadoVentaRepuesto;
+import org.superservice.superservice.utilities.Navegador;
 
+import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -76,7 +81,19 @@ public class DetallesVentaController implements Initializable {
 
     @FXML
     private void agregarPago(ActionEvent event) {
-
+        PagoController controller;
+        try {
+            controller = Navegador.abrirModal("/org/superservice/superservice/pago.fxml",
+                    (Node) event.getSource(), "Agregar pago",
+                    (PagoController ctlr) -> {
+                        ctlr.pasarVenta(this.ventaRepuesto);
+                    });
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+        this.ventaRepuesto = controller.tomarVentaCargada();
+        pasarVenta(this.ventaRepuesto);
     }
 
     private void configurarColumnasTablas() {
@@ -105,7 +122,7 @@ public class DetallesVentaController implements Initializable {
         tablaDetalles.setItems(this.listaDTOsDetalles);
         //Tabla de pagos
         this.listaDTOsPagos.clear();
-        for (Pago p: this.ventaRepuesto.getPagosList()) {
+        for (Pago p : this.ventaRepuesto.getPagosList()) {
             PagosDTOtabla dto = new PagosDTOtabla(p);
             this.listaDTOsPagos.add(dto);
         }
@@ -119,7 +136,15 @@ public class DetallesVentaController implements Initializable {
         labelMontoTotal.setText("$ " + v.getMontoTotal());
         labelEstadoVenta.setText(v.getEstadoVenta().toString());
         labelMontoFaltante.setText("$ " + v.getMontoFaltante());
-
+        if (v.getEstadoVenta().equals(EstadoVentaRepuesto.PENDIENTE_PAGO)) {
+            btnAgregarPago.setDisable(false);
+        } else {
+            btnAgregarPago.setDisable(true);
+        }
         llenarTablasConDTOs();
+    }
+
+    public VentaRepuesto tomarVenta() {
+        return this.ventaRepuesto;
     }
 }
