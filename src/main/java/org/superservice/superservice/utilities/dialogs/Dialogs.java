@@ -25,4 +25,21 @@ public class Dialogs {
         return cantidad;
     }
 
+    //todo: ver de hacer 1 solo método reutilizable
+    public static String motivoBorrado() {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Motivo");
+        dialog.setHeaderText("Ingrese el motivo por el cual se cancela la venta.");
+        dialog.setContentText("Motivo: ");
+
+        Optional<String> opt = dialog.showAndWait();
+        //si se cierra la ventana
+        if (opt.isEmpty()) {
+            return null;
+        }
+        String motivo = opt.get().trim();
+        ManejadorInputs.textoGenerico(motivo, true, 3, 50);
+        return motivo;
+    }
+
 }

@@ -183,7 +183,7 @@ public class VentaRepuestoDAOimpl implements VentaRepuestoDAO {
     }
 
     @Override
-    public Boolean borradoLogico(Long idVenta, String motivo, Usuario usuario) {
+    public VentaRepuesto borradoLogico(Long idVenta, String motivo, Usuario usuario) {
         session = Util.getHibernateSession();
         VentaRepuesto venta = session.find(VentaRepuesto.class, idVenta);
         if (venta != null) {
@@ -196,19 +196,19 @@ public class VentaRepuestoDAOimpl implements VentaRepuestoDAO {
             }
             try {
                 session.beginTransaction();
-                session.merge(venta);
+                venta = session.merge(venta);
                 session.persist(auditoria);
                 session.getTransaction().commit();
-                return true;
+                return venta;
             } catch (Exception e) {
                 session.getTransaction().rollback();
                 e.printStackTrace();
-                return false;
+                return venta;
             } finally {
                 session.close();
             }
         }
-        return false;
+        return venta;
     }
 
 }

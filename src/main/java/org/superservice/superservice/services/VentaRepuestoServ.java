@@ -68,7 +68,7 @@ public class VentaRepuestoServ {
         return dao.modificarVenta(venta);
     }
 
-    public Boolean borradoLogico(VentaRepuesto ventaRepuesto, String motivo, Usuario usuario) {
+    public VentaRepuesto borradoLogico(VentaRepuesto ventaRepuesto, String motivo, Usuario usuario) {
         return dao.borradoLogico(ventaRepuesto.getId(), motivo, usuario);
     }
 }
