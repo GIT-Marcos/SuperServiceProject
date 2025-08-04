@@ -1,11 +1,29 @@
 package org.superservice.superservice.utilities.dialogs;
 
+import javafx.event.ActionEvent;
+import javafx.scene.Node;
 import javafx.scene.control.TextInputDialog;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import org.superservice.superservice.utilities.ManejadorInputs;
-
+import java.io.File;
 import java.util.Optional;
 
 public class Dialogs {
+
+    public static File selectorRuta(ActionEvent event, String titulo, String nombreDefecto,
+                               FileChooser.ExtensionFilter extensiones) {
+        Node n = ((Node) event.getSource());
+        Stage s = (Stage) n.getScene().getWindow();
+        File file;
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle(titulo);
+        fileChooser.setInitialFileName(nombreDefecto);
+        fileChooser.getExtensionFilters().add(extensiones);
+        file = fileChooser.showSaveDialog(s);
+        return file;
+    }
 
     public static Double inputStock() {
         Double cantidad;

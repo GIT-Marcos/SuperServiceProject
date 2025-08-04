@@ -215,33 +215,27 @@ public class NuevaVentaController implements Initializable {
             return;
         }
 
-        Node n = ((Node) event.getSource());
-        Stage s = (Stage) n.getScene().getWindow();
         File file;
         if (checkRutaPredeterminada.isSelected()) {
-            file = new File("C:\\Users\\Usuario\\Desktop\\nota retiro.txt");
+            file = new File(System.getProperty("user.home") + File.separator + "Desktop");
         } else {
-            //todo: hacer dialog reutilizable para selección de rutas
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("¿Dónde quiere guardar la nota de retiro?");
-            fileChooser.setInitialFileName("notaRetiro.txt");
-            fileChooser.getExtensionFilters().add(
-                    new FileChooser.ExtensionFilter("Archivos de texto (*.txt)", "*.txt")
-            );
-            file = fileChooser.showSaveDialog(s);
-            if (file == null) {
-                Alertas.aviso("Emisión nota de retiro", "No ha seleccionado una ruta.");
-                return;
-            }
+            file = Dialogs.selectorRuta(event, "Seleccione donde guardar la nora de retirno",
+                    "nota retiro.txt",
+                    new FileChooser.ExtensionFilter("Archivos de texto (*.txt)", "*.txt"));
+        }
+        if (file == null) {
+            return;
         }
 
-        GeneradorNotaRetiroTXT.generaNotaRetiro(this.detallesRetiro, file);
-        Alertas.exito("Emisión nota de retiro", "Se generado con éxito la nota de retiro en :\n" +
-                file.getAbsolutePath());
-        if (checkImprimirNota.isSelected()) {
-            Impresor.imprimirConSistema(file);
+        try {
+            GeneradorNotaRetiroTXT.generaNotaRetiro(this.detallesRetiro, file);
+            if (checkImprimirNota.isSelected()) {
+                Impresor.imprimirConSistema(file);
+            }
+            btnPagar.setDisable(false);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        btnPagar.setDisable(false);
     }
 
     @FXML

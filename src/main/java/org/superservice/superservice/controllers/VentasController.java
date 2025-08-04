@@ -8,6 +8,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.FileChooser;
 import org.hibernate.HibernateException;
 import org.superservice.superservice.DTOs.VentaRepuestoDTOtabla;
 import org.superservice.superservice.entities.Usuario;
@@ -15,11 +16,13 @@ import org.superservice.superservice.entities.VentaRepuesto;
 import org.superservice.superservice.enums.EstadoVentaRepuesto;
 import org.superservice.superservice.services.UsuarioServ;
 import org.superservice.superservice.services.VentaRepuestoServ;
+import org.superservice.superservice.utilities.GeneradorPDF;
 import org.superservice.superservice.utilities.ManejadorInputs;
 import org.superservice.superservice.utilities.Navegador;
 import org.superservice.superservice.utilities.alertas.Alertas;
 import org.superservice.superservice.utilities.dialogs.Dialogs;
 
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
@@ -137,7 +140,8 @@ public class VentasController implements Initializable {
 
     @FXML
     private void verDetalles(ActionEvent event) {
-        VentaRepuesto venta = tomarVentaDeTabla();
+        VentaRepuesto venta = tomarVentaDeTabla("Detalles de venta", "Debe seleccionar una venta de la" +
+                " tabla para ver sus detalles.");
         if (venta == null) {
             return;
         }
@@ -155,16 +159,37 @@ public class VentasController implements Initializable {
             return;
         }
         dtoSeleccionado = new VentaRepuestoDTOtabla(controller.tomarVenta());
-        this.listaDTOsVentas.set(index,dtoSeleccionado);
+        this.listaDTOsVentas.set(index, dtoSeleccionado);
     }
 
     @FXML
     private void imprimirFactura(ActionEvent event) {
+        VentaRepuesto venta = tomarVentaDeTabla("Imprimir factura", "Debe seleccionar una " +
+                "venta para imprimir su factura.");
+        if (venta == null) {
+            return;
+        }
+        if (venta.getEstadoVenta().equals(EstadoVentaRepuesto.CANCELADO)) {
+            Alertas.aviso("Imprimir factura", "No es posible imprimir facturas canceladas.");
+            return;
+        }
+        File file = Dialogs.selectorRuta(event, "Seleccione donde guardar la factura", "factura.pdf",
+                new FileChooser.ExtensionFilter("Archivos PDF (*.pdf)", "*.pdf"));
+        if (file == null) {
+            return;
+        }
+        try {
+            GeneradorPDF.generaPDFVenta(venta, file);
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            return;
+        }
     }
 
     @FXML
     private void cancelarVenta(ActionEvent event) {
-        VentaRepuesto venta = tomarVentaDeTabla();
+        VentaRepuesto venta = tomarVentaDeTabla("Cancelación de venta", "Debe seleccionar una venta " +
+                "para cancelarla.");
         if (venta == null) {
             return;
         }
@@ -209,11 +234,10 @@ public class VentasController implements Initializable {
     }
 
     //todo: hacer este un método que maneje genéricos para reutilizar
-    private VentaRepuesto tomarVentaDeTabla() {
+    private VentaRepuesto tomarVentaDeTabla(String titulo, String mensaje) {
         VentaRepuestoDTOtabla dtoSelecionado = tablaVentas.getSelectionModel().getSelectedItem();
         if (dtoSelecionado == null) {
-            Alertas.aviso("Detalles de venta", "Debe seleccionar una venta de la" +
-                    " tabla para ver sus detalles.");
+            Alertas.aviso(titulo, mensaje);
             return null;
         }
         return this.ventasRepuestos.stream().filter(v ->

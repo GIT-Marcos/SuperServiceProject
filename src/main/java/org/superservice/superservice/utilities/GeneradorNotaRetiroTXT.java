@@ -1,6 +1,8 @@
 package org.superservice.superservice.utilities;
 
 import org.superservice.superservice.entities.DetalleRetiro;
+import org.superservice.superservice.utilities.alertas.Alertas;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -9,12 +11,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
- *
  * @author Usuario
  */
 public class GeneradorNotaRetiroTXT {
 
-    public static String generaNotaRetiro(List<DetalleRetiro> listaDetallesRetiro, File ruta) {
+    public static void generaNotaRetiro(List<DetalleRetiro> listaDetallesRetiro, File ruta) {
 
         StringBuilder sb = new StringBuilder();
         sb.append("*** NOTA DE RETIRO ***\r\n");
@@ -38,11 +39,13 @@ public class GeneradorNotaRetiroTXT {
         try (BufferedWriter bw = new BufferedWriter(
                 new OutputStreamWriter(new FileOutputStream(ruta), StandardCharsets.ISO_8859_1))) {
             bw.write(sb.toString());
+            Alertas.exito("Emisión nota de retiro", "Se generado con éxito la nota de retiro en :\n" +
+                    ruta);
         } catch (Exception e) {
             e.printStackTrace();
+            Alertas.error("Emisión nota de retiro", e.getMessage());
         }
 
-        return sb.toString();
     }
 
 }
