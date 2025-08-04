@@ -128,10 +128,10 @@ public class DepositoController implements Initializable {
             return;
         }
 
-        resultado = controller.getGuardado();
-        if (resultado) {
+        if (controller.getGuardado()) {
             Repuesto repCargado = controller.getRepuestoCargado();
-            this.repuestosTabla.addFirst(new RepuestoDTOtabla(repCargado));
+            repuestos.add(repCargado);
+            repuestosTabla.addFirst(new RepuestoDTOtabla(repCargado));
         }
     }
 
@@ -157,10 +157,11 @@ public class DepositoController implements Initializable {
             Alertas.aviso("Carga de repuesto", "Error al intentar abrir la ventana.");
             return;
         }
-        int indexModificado = this.repuestosTabla.indexOf(dtoSeleccionado);
-        //todo: devolver el repuesto recién cargado y agregarlo a la lista de clase
-        RepuestoDTOtabla dtoModificado = new RepuestoDTOtabla(controller.getRepuestoCargado());
-        this.repuestosTabla.set(indexModificado, dtoModificado);
+        if (controller.getGuardado()) {
+            int indexModificado = this.repuestosTabla.indexOf(dtoSeleccionado);
+            RepuestoDTOtabla dtoModificado = new RepuestoDTOtabla(controller.getRepuestoCargado());
+            this.repuestosTabla.set(indexModificado, dtoModificado);
+        }
     }
 
     @FXML
