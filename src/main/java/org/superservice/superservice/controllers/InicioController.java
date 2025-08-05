@@ -6,6 +6,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import org.superservice.superservice.entities.Usuario;
 import org.superservice.superservice.utilities.Navegador;
+import org.superservice.superservice.utilities.alertas.Alertas;
+import org.superservice.superservice.utilities.dialogs.Dialogs;
 
 import java.io.IOException;
 
@@ -15,12 +17,12 @@ public class InicioController {
 
     @FXML
     private Button btnDeposito;
-
     @FXML
     private Button btnNuevaVenta;
-
     @FXML
     private Button btnVentas;
+    @FXML
+    private Button btnCerrarSesion;
 
     @FXML
     private void setBtnDeposito(ActionEvent event) {
@@ -46,6 +48,20 @@ public class InicioController {
             Navegador.cambiarEscena("/org/superservice/superservice/ventas.fxml", (Node) event.getSource());
         } catch (IOException ioe) {
             ioe.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void cerrarSesion(ActionEvent event) {
+        boolean confir = Alertas.confirmacion("Cerrar sesión",
+                "¿Está seguro de que quiere cerrar sesión?");
+        if (!confir) {
+            return;
+        }
+        try {
+            Navegador.cambiarEscena("/org/superservice/superservice/login.fxml", (Node) event.getSource());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
