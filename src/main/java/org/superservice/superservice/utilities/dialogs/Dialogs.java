@@ -28,13 +28,12 @@ public class Dialogs {
     }
 
     //esto es auxiliar hasta implementación de JasperReports
-    public static Integer selectorFechaReporte() {
+    public static Integer selectorFechaReporte(String titulo, String header, String content) {
         Integer fecha;
         TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Generar reporte");
-        dialog.setHeaderText("Ingrese el número del año para el reporte. \n" +
-                "Ej: 2025");
-        dialog.setContentText("Año: ");
+        dialog.setTitle(titulo);
+        dialog.setHeaderText(header);
+        dialog.setContentText(content);
 
         Optional<String> opt = dialog.showAndWait();
         //si se cierra la ventana

@@ -4,6 +4,7 @@ package org.superservice.superservice.DAOs;
 import org.superservice.superservice.DTOs.RepuestoRetiradoReporteDTO;
 import org.superservice.superservice.entities.Repuesto;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface RepuestoDAO {
@@ -60,7 +61,7 @@ public interface RepuestoDAO {
     List<Repuesto> buscarConFiltros(String inputParaBuscar, Integer opcionBusqueda,
             Boolean stockNormal, Boolean stockBajo, String nombreColumnaOrnenar, Integer tipoOrden);
     
-    List<RepuestoRetiradoReporteDTO> masRetiradosEnMes(int mes, int anio);
+    List<RepuestoRetiradoReporteDTO> masRetirados(Integer cantidad, LocalDate fechaInicio, LocalDate fechaFin);
 
     //////////////////////ESCRITURA
     

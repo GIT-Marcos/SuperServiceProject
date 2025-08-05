@@ -6,8 +6,11 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.hibernate.Session;
 import org.superservice.superservice.DTOs.RepuestoRetiradoReporteDTO;
 import org.superservice.superservice.entities.Repuesto;
@@ -22,7 +25,7 @@ public class RepuestoDAOimpl implements RepuestoDAO {
     public List<Repuesto> todosRepuestos() {
         session = Util.getHibernateSession();
         List<Repuesto> repuestos = session.createQuery("SELECT r FROM Repuesto r JOIN FETCH r.stock "
-                + "WHERE r.activo = true",
+                        + "WHERE r.activo = true",
                 Repuesto.class).setMaxResults(50).list();
         session.close();
         return repuestos;
@@ -40,9 +43,9 @@ public class RepuestoDAOimpl implements RepuestoDAO {
     public Long cuentaRespBajoStock() {
         session = Util.getHibernateSession();
         Long cantidad = session.createQuery("SELECT DISTINCT COUNT(r) FROM Repuesto r "
-                + "WHERE r.stock.cantidad <= r.stock.cantMinima AND "
-                + "r.stock.activo = true",
-                Long.class)
+                                + "WHERE r.stock.cantidad <= r.stock.cantMinima AND "
+                                + "r.stock.activo = true",
+                        Long.class)
                 .getSingleResult();
         session.close();
         return cantidad;
@@ -53,7 +56,7 @@ public class RepuestoDAOimpl implements RepuestoDAO {
         Boolean resultado;
         session = Util.getHibernateSession();
         resultado = session.createNativeQuery("SELECT r.activo FROM repuestos r WHERE r.codigo_barra = :codBarra",
-                Boolean.class)
+                        Boolean.class)
                 .setParameter("codBarra", codBarra)
                 .getSingleResultOrNull();
         session.close();
@@ -64,8 +67,8 @@ public class RepuestoDAOimpl implements RepuestoDAO {
     public Repuesto buscarPorCodBarraExacto(String codBarra) {
         session = Util.getHibernateSession();
         Repuesto repuesto = session.createQuery("SELECT DISTINCT r FROM Repuesto r "
-                + "WHERE r.codBarra LIKE :codBarra",
-                Repuesto.class)
+                                + "WHERE r.codBarra LIKE :codBarra",
+                        Repuesto.class)
                 .setParameter("codBarra", codBarra)
                 .getSingleResult();
         session.close();
@@ -76,8 +79,8 @@ public class RepuestoDAOimpl implements RepuestoDAO {
     public List<Repuesto> buscarPorCodBarra(String codBarra) {
         session = Util.getHibernateSession();
         List<Repuesto> lista = session.createQuery("SELECT DISTINCT r FROM Repuesto r "
-                + "WHERE r.codBarra LIKE :codBarra "
-                + "AND r.activo = true",
+                        + "WHERE r.codBarra LIKE :codBarra "
+                        + "AND r.activo = true",
                 Repuesto.class).setParameter("codBarra", "%" + codBarra + "%").list();
         session.close();
         return lista;
@@ -87,9 +90,9 @@ public class RepuestoDAOimpl implements RepuestoDAO {
     public List<Repuesto> buscarPorDetalle(String detalle) {
         session = Util.getHibernateSession();
         List<Repuesto> lista = session.createQuery("SELECT DISTINCT r FROM Repuesto r "
-                + "WHERE LOWER(r.detalle) "
-                + "LIKE :detalle "
-                + "AND r.activo = true",
+                        + "WHERE LOWER(r.detalle) "
+                        + "LIKE :detalle "
+                        + "AND r.activo = true",
                 Repuesto.class).setParameter("detalle", "%" + detalle.toLowerCase() + "%").list();
         session.close();
         return lista;
@@ -97,7 +100,7 @@ public class RepuestoDAOimpl implements RepuestoDAO {
 
     @Override
     public List<Repuesto> buscarConFiltros(String inputParaBuscar, Integer opcionBusqueda, Boolean stockNormal,
-            Boolean stockBajo, String nombreColumnaOrnenar, Integer tipoOrden) {
+                                           Boolean stockBajo, String nombreColumnaOrnenar, Integer tipoOrden) {
         session = Util.getHibernateSession();
         CriteriaBuilder cb = session.getCriteriaBuilder();
         CriteriaQuery<Repuesto> query = cb.createQuery(Repuesto.class);
@@ -141,20 +144,21 @@ public class RepuestoDAOimpl implements RepuestoDAO {
     }
 
     @Override
-    public List<RepuestoRetiradoReporteDTO> masRetiradosEnMes(int fechaInicio, int fechaFin) {
+    public List<RepuestoRetiradoReporteDTO> masRetirados(Integer cantidadRepuestos,
+                                                         LocalDate fechaInicio, LocalDate fechaFin) {
         session = Util.getHibernateSession();
 
         TypedQuery<Object[]> query = session.createQuery(
-                "SELECT dr.repuesto, COUNT(dr.repuesto) "
-                + "FROM NotaRetiro nr "
-                + "JOIN nr.detalleRetiroList dr "
-                + "WHERE nr.fecha BETWEEN :fechaInicio AND :fechaFin "
-                + "GROUP BY dr.repuesto "
-                + "ORDER BY COUNT(dr.repuesto) DESC",
-                Object[].class)
+                        "SELECT dr.repuesto, COUNT(dr.repuesto) "
+                                + "FROM NotaRetiro nr "
+                                + "JOIN nr.detalleRetiroList dr "
+                                + "WHERE nr.fecha BETWEEN :fechaInicio AND :fechaFin "
+                                + "GROUP BY dr.repuesto "
+                                + "ORDER BY COUNT(dr.repuesto) DESC",
+                        Object[].class)
                 .setParameter("fechaInicio", fechaInicio)
                 .setParameter("fechaFin", fechaFin)
-                .setMaxResults(5);
+                .setMaxResults(cantidadRepuestos);
 
         List<Object[]> lista = query.getResultList();
         List<RepuestoRetiradoReporteDTO> masRetirados = new ArrayList<>();
@@ -210,17 +214,17 @@ public class RepuestoDAOimpl implements RepuestoDAO {
         session = Util.getHibernateSession();
         //El que viene tiene la id nula pq se la genera el orm, hay que buscarla
         Long idInactivo = session.createNativeQuery("SELECT r.pk_repuesto FROM repuestos r "
-                + "WHERE r.codigo_barra = :codigo_barra",
-                Long.class)
+                                + "WHERE r.codigo_barra = :codigo_barra",
+                        Long.class)
                 .setParameter("codigo_barra", repuesto.getCodBarra())
                 .getSingleResultOrNull();
         try {
             session.beginTransaction();
             session.createNativeQuery("UPDATE stocks SET cantidad_minima= :cantidad_minima, "
-                    + "cantidad= :cantidad, lote= :lote, observaciones= :obser, ubicacion= :ubic, "
-                    + "activo = true "
-                    + "WHERE pk_stock= :pk",
-                    Integer.class)
+                                    + "cantidad= :cantidad, lote= :lote, observaciones= :obser, ubicacion= :ubic, "
+                                    + "activo = true "
+                                    + "WHERE pk_stock= :pk",
+                            Integer.class)
                     .setParameter("cantidad_minima", repuesto.getStock().getCantMinima())
                     .setParameter("cantidad", repuesto.getStock().getCantidad())
                     .setParameter("lote", repuesto.getStock().getLote())
@@ -229,10 +233,10 @@ public class RepuestoDAOimpl implements RepuestoDAO {
                     .setParameter("pk", idInactivo)
                     .executeUpdate();
             session.createNativeQuery("UPDATE repuestos SET detalle= :detalle, "
-                    + "marca= :marca, precio= :precio, "
-                    + "activo = true "
-                    + "WHERE pk_repuesto= :pk",
-                    Integer.class)
+                                    + "marca= :marca, precio= :precio, "
+                                    + "activo = true "
+                                    + "WHERE pk_repuesto= :pk",
+                            Integer.class)
                     .setParameter("detalle", repuesto.getDetalle())
                     .setParameter("marca", repuesto.getMarca())
                     .setParameter("precio", repuesto.getPrecio())
@@ -254,13 +258,13 @@ public class RepuestoDAOimpl implements RepuestoDAO {
         try {
             session.beginTransaction();
             session.createNativeQuery("UPDATE stocks SET activo = false "
-                    + "WHERE pk_stock= :pk",
-                    Integer.class)
+                                    + "WHERE pk_stock= :pk",
+                            Integer.class)
                     .setParameter("pk", id)
                     .executeUpdate();
             session.createNativeQuery("UPDATE repuestos SET activo = false "
-                    + "WHERE pk_repuesto= :pk",
-                    Integer.class)
+                                    + "WHERE pk_repuesto= :pk",
+                            Integer.class)
                     .setParameter("pk", id)
                     .executeUpdate();
             session.getTransaction().commit();

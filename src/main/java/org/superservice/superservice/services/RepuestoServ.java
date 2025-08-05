@@ -1,5 +1,6 @@
 package org.superservice.superservice.services;
 
+import java.time.LocalDate;
 import java.util.List;
 import org.hibernate.HibernateException;
 import org.superservice.superservice.DAOs.RepuestoDAO;
@@ -44,8 +45,17 @@ public class RepuestoServ {
                 stockBajo, nombreColumnaOrnenar, tipoOrden);
     }
     
-    public List<RepuestoRetiradoReporteDTO> masRetiradosPorMes(int mes, int anio){
-        return dao.masRetiradosEnMes(mes, anio);
+    public List<RepuestoRetiradoReporteDTO> repuestosMasRetirados(Integer cantidad, LocalDate fechaMin, LocalDate fechaMax){
+        if (cantidad == null || cantidad < 0 || cantidad > 13) {
+            cantidad = 5;
+        }
+        if (fechaMin == null) {
+            fechaMin = LocalDate.now().minusYears(20L);
+        }
+        if (fechaMax == null) {
+            fechaMax = LocalDate.now();
+        }
+        return dao.masRetirados(cantidad, fechaMin, fechaMax);
     }
 
     public Repuesto cargarRepuesto(Repuesto repuesto) {
