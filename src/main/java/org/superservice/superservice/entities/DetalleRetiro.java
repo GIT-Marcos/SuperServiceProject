@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import org.superservice.superservice.utilities.ManejadorInputs;
 import org.superservice.superservice.utilities.Operador;
 
 import java.io.Serializable;
@@ -44,6 +45,7 @@ public class DetalleRetiro implements Serializable {
         this.cantidad = cantidad;
         this.repuesto = repuesto;
         calcularSubTotal();
+        restarStockDeRepuesto();
     }
 
     public Long getId() {
@@ -87,5 +89,17 @@ public class DetalleRetiro implements Serializable {
         } else {
             this.subTotal = BigDecimal.ONE;
         }
+    }
+
+    private void restarStockDeRepuesto() {
+        Double existente = this.getRepuesto().getStock().getCantidad();
+        Double retirado = this.getCantidad();
+        Double nuevaCantidad = existente - retirado;
+        if (nuevaCantidad < 0) {
+            nuevaCantidad = 0D;
+        }
+        //redondea
+        nuevaCantidad = ManejadorInputs.cantidadStock(String.valueOf(nuevaCantidad), true);
+        this.getRepuesto().getStock().setCantidad(nuevaCantidad);
     }
 }

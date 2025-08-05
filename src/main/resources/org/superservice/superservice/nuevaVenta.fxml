@@ -23,9 +23,9 @@
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="170.50745212880412" minWidth="10.0" prefWidth="200.0" />
             <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="169.3582233064397" minWidth="10.0" prefWidth="200.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="175.65671416767248" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="175.65671416767248" minWidth="0.0" prefWidth="10.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="294.940290879768" minWidth="10.0" prefWidth="134.91045022217946" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="175.65671416767248" minWidth="10.0" prefWidth="147.8209045097435" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="175.65671416767248" minWidth="0.0" prefWidth="16.313418430218803" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="294.940290879768" minWidth="10.0" prefWidth="224.79105271653646" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="144.9402892753685" minWidth="10.0" prefWidth="134.68655482526094" />
           <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="124.04478146286851" minWidth="10.0" prefWidth="124.04478146286851" />
         </columnConstraints>
@@ -35,17 +35,18 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label text="Buscar por:" textFill="WHITE" GridPane.columnIndex="1" />
-            <Button fx:id="btnBuscar" mnemonicParsing="false" onAction="#buscarConFiltros" text="Buscar con filtro" GridPane.rowIndex="1" />
-            <ComboBox fx:id="comboBuscarPor" prefWidth="150.0" GridPane.columnIndex="2" />
-            <TextField fx:id="tfBuscar" />
+            <Label text="Buscar por:" textFill="WHITE" GridPane.halignment="RIGHT" />
+            <Button fx:id="btnBuscar" mnemonicParsing="false" onAction="#buscarConFiltros" text="Buscar con filtro" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <ComboBox fx:id="comboBuscarPor" prefWidth="150.0" GridPane.columnIndex="1" />
+            <TextField fx:id="tfBuscar" GridPane.rowIndex="1" />
             <Separator orientation="VERTICAL" prefHeight="95.0" prefWidth="4.0" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowSpan="2147483647" GridPane.valignment="CENTER" />
             <Button fx:id="btnAgregarLista" mnemonicParsing="false" onAction="#agregarRepuesto" text="Agregar seleccionado" GridPane.columnIndex="4" GridPane.rowIndex="2" />
             <Button fx:id="btnLimpiarLista" mnemonicParsing="false" onAction="#limpiarLista" text="Limpiar lista de venta" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-            <Button mnemonicParsing="false" text="Quitar repuesto" GridPane.columnIndex="4" />
+            <Button disable="true" maxHeight="0.0" maxWidth="0.0" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" prefHeight="0.0" prefWidth="0.0" text="Quitar repuesto" GridPane.columnIndex="4" />
             <Label text="Repuestos para vender:" textFill="WHITE" GridPane.rowIndex="2" />
             <Label text="Repuestos a vender:" textFill="WHITE" GridPane.columnIndex="6" GridPane.rowIndex="2" />
-            <Button fx:id="btnTodosRepuestos" mnemonicParsing="false" onAction="#todosRepuestos" text="Todos los repuestos" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Button fx:id="btnTodosRepuestos" mnemonicParsing="false" onAction="#todosRepuestos" text="Todos los repuestos" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+            <CheckBox fx:id="checkStockBajo" mnemonicParsing="false" selected="true" text="Mostrar con stock bajo" textFill="WHITE" GridPane.columnIndex="2" />
          </children>
          <BorderPane.margin>
             <Insets left="5.0" right="5.0" top="5.0" />
@@ -110,8 +111,8 @@
               <columns>
                 <TableColumn fx:id="colCodBarra" prefWidth="90.26864004135132" text="Cod Barra" />
                 <TableColumn fx:id="colNombre" prefWidth="171.22391510009766" text="Nombre" />
-                  <TableColumn fx:id="colMarca" prefWidth="126.089599609375" text="Marca" />
-                  <TableColumn fx:id="colPrecio" prefWidth="101.014892578125" text="Precio" />
+                  <TableColumn fx:id="colMarca" prefWidth="136.119384765625" text="Marca" />
+                  <TableColumn fx:id="colPrecio" prefWidth="91.70147705078125" text="Precio" />
               </columns>
             </TableView>
             <Label maxHeight="1.7976931348623157E308" text="&gt;" textAlignment="CENTER" textFill="WHITE">
@@ -121,11 +122,11 @@
             </Label>
             <TableView fx:id="tablaDetallesVenta" prefWidth="490.0">
               <columns>
-                <TableColumn fx:id="colDetNombre" prefWidth="123.94037240743637" text="Nombre" />
-                <TableColumn fx:id="colDetMarca" prefWidth="120.35821533203125" text="Marca repuesto" />
-                  <TableColumn fx:id="colDetPrecioUni" prefWidth="79.52232360839844" text="Precio Uni." />
-                  <TableColumn fx:id="colDetCantidad" prefWidth="90.2686767578125" text="Cantidad ven." />
-                  <TableColumn fx:id="colDetSubTotal" prefWidth="77.3731689453125" text="Sub-total" />
+                <TableColumn fx:id="colDetNombre" prefWidth="142.56714242696762" text="Nombre" />
+                <TableColumn fx:id="colDetMarca" prefWidth="97.432861328125" text="Marca repuesto" />
+                  <TableColumn fx:id="colDetPrecioUni" prefWidth="85.97013854980469" text="Precio Uni." />
+                  <TableColumn fx:id="colDetCantidad" prefWidth="83.82086181640625" text="Cantidad ven." />
+                  <TableColumn fx:id="colDetSubTotal" prefWidth="85.2537841796875" text="Sub-total" />
               </columns>
             </TableView>
          </children>

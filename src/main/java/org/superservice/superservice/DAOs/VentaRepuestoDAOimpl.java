@@ -29,7 +29,8 @@ public class VentaRepuestoDAOimpl implements VentaRepuestoDAO {
     @Override
     public List<VentaRepuesto> todasVentas() {
         session = Util.getHibernateSession();
-        List<VentaRepuesto> ventas = session.createQuery("SELECT DISTINCT v FROM VentaRepuesto v",
+        List<VentaRepuesto> ventas = session.createQuery("SELECT DISTINCT v FROM VentaRepuesto v " +
+                        "ORDER BY v.id DESC",
                 VentaRepuesto.class).setMaxResults(100).list();
         session.close();
         return ventas;

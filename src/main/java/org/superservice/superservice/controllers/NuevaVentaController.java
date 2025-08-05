@@ -33,88 +33,61 @@ import java.util.ResourceBundle;
 public class NuevaVentaController implements Initializable {
 
     private VentaRepuesto ventaRepuesto;
-
     private NotaRetiro notaRetiro = new NotaRetiro();
-
     private List<DetalleRetiro> detallesRetiro = new ArrayList<>();
-
     private List<Repuesto> repuestosParaTabla = new ArrayList<>();
-
     private RepuestoServ repuestoServ = new RepuestoServ();
-
     private ObservableList<RepuestoDTOtabla> dtosRepuestos = FXCollections.observableArrayList();
-
     private ObservableList<DetalleRetiroVentaDTO> dtosDetalles = FXCollections.observableArrayList();
 
     @FXML
     private TableView<RepuestoDTOtabla> tableRepuestos;
-
     @FXML
     private TableColumn<RepuestoDTOtabla, String> colCodBarra;
-
     @FXML
     private TableColumn<RepuestoDTOtabla, String> colNombre;
-
     @FXML
     private TableColumn<RepuestoDTOtabla, String> colMarca;
-
     @FXML
     private TableColumn<RepuestoDTOtabla, String> colPrecio;
-
     @FXML
     private TableView<DetalleRetiroVentaDTO> tablaDetallesVenta;
-
     @FXML
     private TableColumn<DetalleRetiroVentaDTO, String> colDetNombre;
-
     @FXML
     private TableColumn<DetalleRetiroVentaDTO, String> colDetMarca;
-
     @FXML
     private TableColumn<DetalleRetiroVentaDTO, String> colDetPrecioUni;
-
     @FXML
     private TableColumn<DetalleRetiroVentaDTO, Double> colDetCantidad;
-
     @FXML
     private TableColumn<DetalleRetiroVentaDTO, String> colDetSubTotal;
-
     @FXML
     private TextField tfBuscar;
-
     @FXML
     private ComboBox<String> comboBuscarPor;
-
+    @FXML
+    private CheckBox checkStockBajo;
     @FXML
     private Button btnBuscar;
-
     @FXML
     private Button btnTodosRepuestos;
-
     @FXML
     private Button btnLimpiarLista;
-
     @FXML
     private Button btnAgregarLista;
-
     @FXML
     private CheckBox checkImprimirNota;
-
     @FXML
     private CheckBox checkRutaPredeterminada;
-
     @FXML
     private Button btnEmitirNota;
-
     @FXML
     private Button btnPagar;
-
     @FXML
     private Label labelTotal;
-
     @FXML
     private Button btnVolver;
-
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -129,6 +102,10 @@ public class NuevaVentaController implements Initializable {
     @FXML
     private void buscarConFiltros() {
         String inputBuscar = tfBuscar.getText().trim();
+        Boolean stockBajo = true;
+        if (!checkStockBajo.isSelected()) {
+            stockBajo = false;
+        }
         if (inputBuscar.isEmpty()) {
             return;
         }
@@ -139,7 +116,7 @@ public class NuevaVentaController implements Initializable {
             Alertas.aviso("Atención", iae.getMessage());
             return;
         }
-        this.repuestosParaTabla = repuestoServ.buscarConFiltros(inputBuscar, buscarPor, true, true, "detalle", null);
+        this.repuestosParaTabla = repuestoServ.buscarConFiltros(inputBuscar, buscarPor, true, stockBajo, "detalle", null);
         this.llenarTablaRepuestos();
     }
 
@@ -194,6 +171,20 @@ public class NuevaVentaController implements Initializable {
             if (r.getId().equals(idSeleccion)) {
                 repuesto = r;
                 break;
+            }
+        }
+        if (cantidad > repuesto.getStock().getCantidad()) {
+            Alertas.error("Nueva venta", "La cantidad que se intenta vender " + cantidad + "\n" +
+                    "es mayor que el existente " + repuesto.getStock().getCantidad());
+            return;
+        }
+        if (cantidad > repuesto.getStock().getCantMinima()) {
+            boolean confir = Alertas.confirmacion("Nueva venta", "La cantidad de stock a vender es mayor a la mínima tolerada.\n" +
+                    "La cantidad de stock de " + repuesto.getDetalle() + " quedará por de bajo del mínimo establecido " +
+                    "(" + repuesto.getStock().getCantMinima() + " " + repuesto.getStock().getUnidadMedida() + ").\n" +
+                    "¿Continuar con la venta?");
+            if (!confir) {
+                return;
             }
         }
         DetalleRetiro detalleRetiro = new DetalleRetiro(null, cantidad, repuesto);

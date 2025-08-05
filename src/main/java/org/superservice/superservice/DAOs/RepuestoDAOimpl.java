@@ -25,8 +25,8 @@ public class RepuestoDAOimpl implements RepuestoDAO {
     public List<Repuesto> todosRepuestos() {
         session = Util.getHibernateSession();
         List<Repuesto> repuestos = session.createQuery("SELECT r FROM Repuesto r JOIN FETCH r.stock "
-                        + "WHERE r.activo = true",
-                Repuesto.class).setMaxResults(50).list();
+                        + "WHERE r.activo = true ORDER BY r.detalle",
+                Repuesto.class).list();
         session.close();
         return repuestos;
     }

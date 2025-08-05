@@ -39,9 +39,9 @@ public class NotaRetiro implements Serializable {
     public NotaRetiro() {
     }
 
-    public NotaRetiro(Long id, LocalDate fecha, List<DetalleRetiro> detalleRetiroList) {
+    public NotaRetiro(Long id, List<DetalleRetiro> detalleRetiroList) {
         this.id = id;
-        this.fecha = fecha;
+        this.fecha = LocalDate.now();
         this.detalleRetiroList = detalleRetiroList;
     }
 
