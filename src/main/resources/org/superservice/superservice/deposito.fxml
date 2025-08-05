@@ -80,12 +80,12 @@
                   <Font size="14.0" />
                </font>
             </Label>
-            <Button mnemonicParsing="false" prefWidth="80.0" text="XLSX">
+            <ComboBox fx:id="comboFormatos" prefWidth="80.0">
                <VBox.margin>
                   <Insets top="10.0" />
                </VBox.margin>
-            </Button>
-            <Button mnemonicParsing="false" prefWidth="80.0" text="CSV">
+            </ComboBox>
+            <Button fx:id="btnGenerar" mnemonicParsing="false" onAction="#generar" prefHeight="30.0" prefWidth="150.0" text="Generar">
                <VBox.margin>
                   <Insets top="10.0" />
                </VBox.margin>

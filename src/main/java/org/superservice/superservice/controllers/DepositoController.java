@@ -14,6 +14,7 @@ import org.superservice.superservice.entities.Repuesto;
 import org.superservice.superservice.entities.Stock;
 import org.superservice.superservice.services.RepuestoServ;
 import org.superservice.superservice.services.StockServ;
+import org.superservice.superservice.utilities.ExportadorTabla;
 import org.superservice.superservice.utilities.Navegador;
 import org.superservice.superservice.utilities.ManejadorInputs;
 import org.superservice.superservice.utilities.alertas.Alertas;
@@ -74,6 +75,10 @@ public class DepositoController implements Initializable {
     private Button btnIngresarStock;
     @FXML
     private Button btnMasRetirados;
+    @FXML
+    private ComboBox<String> comboFormatos;
+    @FXML
+    private Button btnGenerar;
     @FXML
     private Button btnVolver;
     @FXML
@@ -260,6 +265,36 @@ public class DepositoController implements Initializable {
         }
     }
 
+    //todo: mejorar esta bosta
+    @FXML
+    private void generar(ActionEvent event) {
+        if (this.repuestos.isEmpty()) {
+            Alertas.aviso("Generar tabla", "No hay repuestos para generar.");
+            return;
+        }
+        int formato = comboFormatos.getSelectionModel().getSelectedIndex();
+        File file = null;
+        if (formato == 0) {
+            //csv
+            file = Dialogs.selectorRuta(event, "Seleccione la ruta para la generación de la tabla",
+                    "tabla ventas.csv",
+                    new FileChooser.ExtensionFilter("Archivos CSV (*.csv)", "*.csv"));
+            if (file == null) {
+                return;
+            }
+            ExportadorTabla.exportarRepuestosCSV(this.repuestos, file);
+        } else if (formato == 1) {
+            //xlsx
+            file = Dialogs.selectorRuta(event, "Seleccione la ruta para la generación de la tabla",
+                    "tabla ventas.xlsx",
+                    new FileChooser.ExtensionFilter("Archivos Excel (*.xlsx)", "*.xlsx"));
+            if (file == null) {
+                return;
+            }
+            ExportadorTabla.exportarRepuestosXLSX(this.repuestos, file);
+        }
+    }
+
     @FXML
     private void volver(ActionEvent event) {
         try {
@@ -330,7 +365,14 @@ public class DepositoController implements Initializable {
         obsListTipoOrden.add("Descendente");
         comboTipoOrden.setItems(obsListTipoOrden);
         comboTipoOrden.getSelectionModel().select(0);
+        /****************/
+        ObservableList<String> obsListFormatos = FXCollections.observableArrayList();
+        obsListFormatos.add("CSV");
+        obsListFormatos.add("XLSX");
+        comboFormatos.setItems(obsListFormatos);
+        comboFormatos.getSelectionModel().select(0);
     }
+
 
     private String tomaOrdenEligido() {
         int ordenarPor = comboOrdenarPor.getSelectionModel().getSelectedIndex();
