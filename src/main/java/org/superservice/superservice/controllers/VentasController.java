@@ -193,7 +193,8 @@ public class VentasController implements Initializable {
 
     @FXML
     private void totalVentasAnual(ActionEvent event) {
-        Integer fecha = Dialogs.selectorFechaReporte();
+        Integer fecha = Dialogs.selectorFechaReporte("Generar reporte", "Ingrese el número del año para el reporte. \n" +
+                "Ej: 2025", "Año: ");
         if (fecha == null) {
             return;
         }
@@ -209,7 +210,8 @@ public class VentasController implements Initializable {
 
     @FXML
     private void cantidadVentasAnual(ActionEvent event) {
-        Integer fecha = Dialogs.selectorFechaReporte();
+        Integer fecha = Dialogs.selectorFechaReporte("Generar reporte", "Ingrese el número del año para el reporte. \n" +
+                "Ej: 2025", "Año: ");
         if (fecha == null) {
             return;
         }

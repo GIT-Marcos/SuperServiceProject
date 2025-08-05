@@ -54,12 +54,15 @@
                   <Insets top="10.0" />
                </VBox.margin>
             </Separator>
-            <Label text="Generación de reportes">
+            <Label text="Generación de reportes" textFill="WHITE">
                <VBox.margin>
                   <Insets top="10.0" />
                </VBox.margin>
+               <font>
+                  <Font size="14.0" />
+               </font>
             </Label>
-            <Button fx:id="btnRetiradosEnMes" mnemonicParsing="false" onAction="#retiradonEnMes" prefHeight="30.0" prefWidth="150.0" text="Más retirados en mes">
+            <Button fx:id="btnMasRetirados" mnemonicParsing="false" onAction="#masRetirados" prefHeight="30.0" prefWidth="150.0" text="Más retirados en mes">
                <VBox.margin>
                   <Insets top="10.0" />
                </VBox.margin>
@@ -69,10 +72,13 @@
                   <Insets top="10.0" />
                </VBox.margin>
             </Separator>
-            <Label text="Generar tabla actual">
+            <Label text="Generar tabla actual" textFill="WHITE">
                <VBox.margin>
                   <Insets top="10.0" />
                </VBox.margin>
+               <font>
+                  <Font size="14.0" />
+               </font>
             </Label>
             <Button mnemonicParsing="false" prefWidth="80.0" text="XLSX">
                <VBox.margin>
@@ -129,35 +135,50 @@
         </rowConstraints>
          <children>
             <Button fx:id="butBuscar" mnemonicParsing="false" onAction="#buscarConFiltros" prefHeight="30.0" prefWidth="150.0" text="Buscar con filtros" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
-            <Label prefHeight="20.0" text="Buscar por:" GridPane.columnIndex="2">
+            <Label prefHeight="20.0" text="Buscar por:" textFill="WHITE" GridPane.columnIndex="2">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
+               <font>
+                  <Font size="14.0" />
+               </font>
             </Label>
             <ComboBox fx:id="comboBuscarPor" prefHeight="20.0" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </ComboBox>
-            <CheckBox fx:id="checkMostrarNormal" mnemonicParsing="false" prefHeight="20.0" selected="true" text="Mostrar stock normal" GridPane.columnIndex="1">
+            <CheckBox fx:id="checkMostrarNormal" mnemonicParsing="false" prefHeight="20.0" selected="true" text="Mostrar stock normal" textFill="WHITE" GridPane.columnIndex="1">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
+               <font>
+                  <Font size="14.0" />
+               </font>
             </CheckBox>
-            <CheckBox fx:id="checkMostrarBajo" mnemonicParsing="false" prefHeight="20.0" selected="true" text="Mostrar stock bajo" GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <CheckBox fx:id="checkMostrarBajo" mnemonicParsing="false" prefHeight="20.0" selected="true" text="Mostrar stock bajo" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
+               <font>
+                  <Font size="14.0" />
+               </font>
             </CheckBox>
-            <Label prefHeight="20.0" text="Ordenar por:" GridPane.columnIndex="3">
+            <Label prefHeight="20.0" text="Ordenar por:" textFill="WHITE" GridPane.columnIndex="3">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
+               <font>
+                  <Font size="14.0" />
+               </font>
             </Label>
-            <Label prefHeight="20.0" text="Tipo de orden:" GridPane.columnIndex="4">
+            <Label prefHeight="20.0" text="Tipo de orden:" textFill="WHITE" GridPane.columnIndex="4">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
+               <font>
+                  <Font size="14.0" />
+               </font>
             </Label>
             <ComboBox fx:id="comboOrdenarPor" prefHeight="20.0" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
                <GridPane.margin>

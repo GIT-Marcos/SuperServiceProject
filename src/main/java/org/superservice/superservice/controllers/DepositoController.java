@@ -8,6 +8,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.FileChooser;
 import org.superservice.superservice.DTOs.RepuestoDTOtabla;
 import org.superservice.superservice.entities.Repuesto;
 import org.superservice.superservice.entities.Stock;
@@ -18,6 +19,7 @@ import org.superservice.superservice.utilities.ManejadorInputs;
 import org.superservice.superservice.utilities.alertas.Alertas;
 import org.superservice.superservice.utilities.dialogs.Dialogs;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
@@ -71,7 +73,7 @@ public class DepositoController implements Initializable {
     @FXML
     private Button btnIngresarStock;
     @FXML
-    private Button btnRetiradosEnMes;
+    private Button btnMasRetirados;
     @FXML
     private Button btnVolver;
     @FXML
@@ -94,7 +96,7 @@ public class DepositoController implements Initializable {
         boolean mostrarNormales = checkMostrarNormal.isSelected();
         boolean mostrarStockBajo = checkMostrarBajo.isSelected();
         try {
-            ManejadorInputs.textoGenerico(input,false, null, 40);
+            ManejadorInputs.textoGenerico(input, false, null, 40);
         } catch (IllegalArgumentException iae) {
             Alertas.aviso("Atención", iae.getMessage());
             return;
@@ -242,12 +244,20 @@ public class DepositoController implements Initializable {
         }
         int indexSeleccionado = this.repuestosTabla.indexOf(dtoSeleccionado);
         dtoSeleccionado.setCantidad(stockEditar.getCantidad());
-        this.repuestosTabla.set(indexSeleccionado,dtoSeleccionado);
+        this.repuestosTabla.set(indexSeleccionado, dtoSeleccionado);
     }
 
     @FXML
-    private void retiradonEnMes() {
+    private void masRetirados(ActionEvent event) {
+        try {
+            Navegador.abrirModal("/org/superservice/superservice/selectorFechasReporte.fxml",
+                    (Node) event.getSource(), "Generar reporte",
+                    (SelectorFechasReporteController ctlr) -> {
 
+                    });
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @FXML

@@ -20,13 +20,14 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import javax.swing.JOptionPane;
 
 public class GeneradorReportes {
 
-    public static void repuestosMasRetiradosEnMes(File file, List<RepuestoRetiradoReporteDTO> listaMasRetiradosDTO, int mes, int anio) {
+    public static void repuestosMasRetiradosEnMes(File file, List<RepuestoRetiradoReporteDTO> listaMasRetiradosDTO,
+                                                  LocalDate fechaMin, LocalDate fechaMax) {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
         long max = 1; // Para calcular el valor máximo
@@ -41,7 +42,7 @@ public class GeneradorReportes {
         }
 
         JFreeChart chart = ChartFactory.createBarChart(
-                "TOP 5 REPUESTOS MÁS RETIRADOS DEL MES: " + mes + " - " + anio,
+                "LOS " + listaMasRetiradosDTO.size() + " REPUESTOS MÁS RETIRADOS ENTRE: " + fechaMin + " y " + fechaMax,
                 "REPUESTOS",
                 "VECES RETIRADO",
                 dataset,
@@ -182,7 +183,7 @@ public class GeneradorReportes {
         }
     }
 
-// auxiliar para calcular el TickUnit óptimo
+    // auxiliar para calcular el TickUnit óptimo
     private static int calcularTickUnit(long max) {
         if (max <= 10) {
             return 1;
