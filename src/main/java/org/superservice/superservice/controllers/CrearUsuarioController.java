@@ -9,6 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import org.hibernate.HibernateException;
 import org.superservice.superservice.entities.Usuario;
 import org.superservice.superservice.enums.PrivilegioUsuario;
 import org.superservice.superservice.services.UsuarioServ;
@@ -57,19 +58,29 @@ public class CrearUsuarioController implements Initializable {
         PrivilegioUsuario privilegio = comboRoles.getSelectionModel().getSelectedItem();
 
         try {
-            ManejadorInputs.textoGenerico(nombre,true,4,20);
-            ManejadorInputs.textoGenerico(contrasenia,true,4,20);
-           } catch (IllegalArgumentException iae) {
+            ManejadorInputs.textoGenerico(nombre, true, 4, 20);
+            ManejadorInputs.textoGenerico(contrasenia, true, 4, 20);
+        } catch (IllegalArgumentException iae) {
             Alertas.aviso("Datos incorrectos", iae.getMessage());
             return;
         }
         Usuario usuario = new Usuario(null, nombre, contrasenia, privilegio);
-        boolean resultado = Alertas.confirmacion("Confirmación", "¿Está seguro que desea cargar el usuario " + nombre + "?");
+        boolean resultado = Alertas.confirmacion("Confirmación", "¿Está seguro que desea " +
+                "cargar el usuario " + nombre + "?");
         if (!resultado) {
             return;
         }
 
-        usuarioServ.cargarUsuario(usuario);
+        try {
+            usuarioServ.cargarUsuario(usuario);
+            Alertas.exito("Nuevo usuario", "Usuario " + nombre + " creado con éxito.");
+            volverAlLogin(event);
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            Alertas.error("Nuevo usuario", "Error de Hibernate.");
+            return;
+        }
+
     }
 
     @FXML
