@@ -217,7 +217,7 @@ public class NuevaVentaController implements Initializable {
 
         File file;
         if (checkRutaPredeterminada.isSelected()) {
-            file = new File(System.getProperty("user.home") + File.separator + "Desktop");
+            file = new File("C:\\Users\\Usuario\\Desktop\\nota retiro.txt");
         } else {
             file = Dialogs.selectorRuta(event, "Seleccione donde guardar la nora de retirno",
                     "nota retiro.txt",
