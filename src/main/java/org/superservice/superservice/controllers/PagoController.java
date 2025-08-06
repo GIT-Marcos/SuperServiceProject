@@ -14,6 +14,7 @@ import org.hibernate.HibernateException;
 import org.superservice.superservice.entities.Pago;
 import org.superservice.superservice.entities.VentaRepuesto;
 import org.superservice.superservice.enums.MetodosPago;
+import org.superservice.superservice.services.StockServ;
 import org.superservice.superservice.services.VentaRepuestoServ;
 import org.superservice.superservice.utilities.ManejadorInputs;
 import org.superservice.superservice.utilities.Operador;
@@ -28,6 +29,7 @@ public class PagoController implements Initializable {
     private VentaRepuesto venta;
     private Pago pago = new Pago();
     private VentaRepuestoServ ventaRepuestoServ = new VentaRepuestoServ();
+    private StockServ stockServ = new StockServ();
     private boolean flagEstadoVenta = false;
     private boolean flagAgregarPago = false;
 
@@ -129,7 +131,9 @@ public class PagoController implements Initializable {
             try {
                 if (!this.flagAgregarPago) {
                     ventaRepuestoServ.cargarVenta(this.venta);
-                    Alertas.exito("Pago", "Venta y pago cargados con éxito.");
+                    stockServ.actualizarStock(this.venta.getNotaRetiro());
+                    Alertas.exito("Pago", "Venta y pago cargados con éxito.\n" +
+                            "Se ha actualizado el stock.");
                 } else {
                     this.venta = ventaRepuestoServ.modificarVenta(this.venta);
                     Alertas.exito("Pago", "Pago cargado a venta correctamente.");

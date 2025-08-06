@@ -15,7 +15,7 @@ public class StockDAOimpl implements StockDAO {
 
     @Override
     public Boolean actualizarStock(List<Stock> stocks) {
-
+        session = Util.getHibernateSession();
         try {
             session.beginTransaction();
             for (Stock s : stocks) {
