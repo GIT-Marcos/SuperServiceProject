@@ -72,6 +72,10 @@ public class DetalleRetiro implements Serializable {
         return repuesto;
     }
 
+    public void setSubTotal(BigDecimal subTotal) {
+        this.subTotal = subTotal;
+    }
+
     public void setRepuesto(Repuesto repuesto) {
         this.repuesto = repuesto;
         calcularSubTotal();

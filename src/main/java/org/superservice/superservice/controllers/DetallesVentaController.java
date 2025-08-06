@@ -92,8 +92,10 @@ public class DetallesVentaController implements Initializable {
             e.printStackTrace();
             return;
         }
-        this.ventaRepuesto = controller.tomarVentaCargada();
-        pasarVenta(this.ventaRepuesto);
+        if (controller.tomarResultado()) {
+            this.ventaRepuesto = controller.tomarVentaCargada();
+            pasarVenta(this.ventaRepuesto);
+        }
     }
 
     private void configurarColumnasTablas() {

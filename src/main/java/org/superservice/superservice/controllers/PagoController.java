@@ -19,6 +19,7 @@ import org.superservice.superservice.services.VentaRepuestoServ;
 import org.superservice.superservice.utilities.ManejadorInputs;
 import org.superservice.superservice.utilities.Operador;
 import org.superservice.superservice.utilities.alertas.Alertas;
+
 import java.math.BigDecimal;
 import java.net.URL;
 import java.time.LocalDate;
@@ -30,8 +31,12 @@ public class PagoController implements Initializable {
     private Pago pago = new Pago();
     private VentaRepuestoServ ventaRepuestoServ = new VentaRepuestoServ();
     private StockServ stockServ = new StockServ();
+    //para cerrar ventana de nueva venta si se carga el pago.
     private boolean flagEstadoVenta = false;
+    //para indicar cuando se agrega un pago o es una venta nueva.
     private boolean flagAgregarPago = false;
+    //para indicar si se ha realizado el pago.
+    private boolean flagResultado = false;
 
     @FXML
     private Label labelTotal;
@@ -94,7 +99,7 @@ public class PagoController implements Initializable {
                 ManejadorInputs.textoGenerico(nroReferencia, true, 4, 20);
             }
 
-            if (monto.compareTo(this.venta.getMontoTotal()) == 1) {
+            if (monto.compareTo(this.venta.getMontoFaltante()) == 1) {
                 Alertas.aviso("Pago", "El monto ingresado es mayor al que se debe pagar.");
                 return;
             }
@@ -108,6 +113,12 @@ public class PagoController implements Initializable {
             return;
         } catch (IllegalArgumentException iae) {
             Alertas.aviso("pago", iae.getMessage());
+            return;
+        }
+
+        boolean confirmacion = Alertas.confirmacion("¿Pagar?", "¿Continuar con el pago?\n" +
+                "El total a pagar con descuentos incluidos serán: $ " + montoPagar);
+        if (!confirmacion) {
             return;
         }
 
@@ -125,26 +136,25 @@ public class PagoController implements Initializable {
         this.pago.setReferencia(nroReferencia);
         this.venta.asociarPago(this.pago);
 
-        boolean confirmacion = Alertas.confirmacion("¿Pagar?", "¿Continuar con el pago?\n" +
-                "El total a pagar con descuentos incluidos serán: $ " + montoPagar);
-        if (confirmacion) {
-            try {
-                if (!this.flagAgregarPago) {
-                    ventaRepuestoServ.cargarVenta(this.venta);
-                    stockServ.actualizarStock(this.venta.getNotaRetiro());
-                    Alertas.exito("Pago", "Venta y pago cargados con éxito.\n" +
-                            "Se ha actualizado el stock.");
-                } else {
-                    this.venta = ventaRepuestoServ.modificarVenta(this.venta);
-                    Alertas.exito("Pago", "Pago cargado a venta correctamente.");
-                }
-            } catch (HibernateException e) {
-                Alertas.error("Pago", e.getMessage());
-                return;
+        try {
+            if (!this.flagAgregarPago) {
+                ventaRepuestoServ.cargarVenta(this.venta);
+                stockServ.actualizarStock(this.venta.getNotaRetiro());
+                this.flagResultado = true;
+                Alertas.exito("Pago", "Venta y pago cargados con éxito.\n" +
+                        "Se ha actualizado el stock.");
+            } else {
+                this.venta = ventaRepuestoServ.modificarVenta(this.venta);
+                this.flagResultado = true;
+                Alertas.exito("Pago", "Pago cargado a venta correctamente.");
             }
-            this.flagEstadoVenta = true;
-            volver(event);
+        } catch (HibernateException e) {
+            Alertas.error("Pago", e.getMessage());
+            return;
         }
+        this.flagEstadoVenta = true;
+        volver(event);
+
     }
 
     @FXML
@@ -224,6 +234,10 @@ public class PagoController implements Initializable {
 
     public boolean tomarFlagEstadoVenta() {
         return this.flagEstadoVenta;
+    }
+
+    public boolean tomarResultado() {
+        return this.flagResultado;
     }
 
     public VentaRepuesto tomarVentaCargada() {

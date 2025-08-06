@@ -65,6 +65,14 @@ public class NotaRetiro implements Serializable {
         return detalleRetiroList;
     }
 
+    public List<DetalleRetiro> getDetalleRetiroList() {
+        return detalleRetiroList;
+    }
+
+    public void setDetalleRetiroList(List<DetalleRetiro> detalleRetiroList) {
+        this.detalleRetiroList = detalleRetiroList;
+    }
+
     public void setDetallesRetiro(List<DetalleRetiro> detallesRetiro) {
         this.detalleRetiroList = detallesRetiro;
     }
