@@ -59,7 +59,7 @@ public class SelectorFechasReporteController implements Initializable {
         LocalDate fechaMax = dateMax.getValue();
 
         File file = Dialogs.selectorRuta(event, "Seleccione la ruta para la generación del reporte",
-                "reporte 5 repuestos más vendidos.jpg",
+                "reporte repuestos más retirados.jpg",
                 new FileChooser.ExtensionFilter("Imágenes JPG (*.jpg, *.jpeg)", "*.jpg", "*.jpeg"));
         if (file == null) {
             return;

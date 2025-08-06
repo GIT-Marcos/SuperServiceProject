@@ -229,7 +229,7 @@ public class VentasController implements Initializable {
     private void cancelarVenta(ActionEvent event) {
         VentaRepuesto venta = tomarVentaDeTabla("Cancelación de venta", "Debe seleccionar una venta " +
                 "para cancelarla.");
-        if (venta == null) {
+        if (venta == null || venta.getEstadoVenta() == EstadoVentaRepuesto.CANCELADO) {
             return;
         }
         VentaRepuestoDTOtabla dtoParaActualizar = tablaVentas.getSelectionModel().getSelectedItem();
