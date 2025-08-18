@@ -125,13 +125,13 @@ public class DepositoController implements Initializable {
 
     @FXML
     private void nuevoRepuesto(ActionEvent event) {
-        boolean resultado;
         CargarRepuestoController controller;
         try {
-            controller = Navegador.abrirModal("/org/superservice/superservice/cargarRepuesto.fxml",
-                    (Node) event.getSource(), "Cargar repuesto");
-        } catch (IOException ioe) {
-            Alertas.aviso("Carga de repuesto", "Error al intentar abrir la ventana.");
+            controller = Navegador.abrirModal("Cargar repuesto",
+                    "/org/superservice/superservice/cargarRepuesto.fxml",
+                    (Node) event.getSource(), null);
+        } catch (Exception e) {
+            Alertas.aviso("Nuevo repuesto", e.getMessage());
             return;
         }
 
@@ -155,13 +155,13 @@ public class DepositoController implements Initializable {
         repModi = this.repuestos.stream().filter(r ->
                 r.getId().equals(dtoSeleccionado.getId())).findFirst().orElse(new Repuesto());
         try {
-            controller = Navegador.abrirModal("/org/superservice/superservice/cargarRepuesto.fxml",
-                    (Node) event.getSource(), "Modificar repuesto",
+            controller = Navegador.abrirModal("Modificar repuesto",
+                    "/org/superservice/superservice/cargarRepuesto.fxml", (Node) event.getSource(),
                     (CargarRepuestoController ctlr) -> {
                         ctlr.llenarCamposParaModificacionRepuesto(repModi);
                     });
-        } catch (IOException ioe) {
-            Alertas.aviso("Carga de repuesto", "Error al intentar abrir la ventana.");
+        } catch (Exception e) {
+            Alertas.aviso("Modificar repuesto", e.getMessage());
             return;
         }
         if (controller.getGuardado()) {
@@ -255,13 +255,12 @@ public class DepositoController implements Initializable {
     @FXML
     private void masRetirados(ActionEvent event) {
         try {
-            Navegador.abrirModal("/org/superservice/superservice/selectorFechasReporte.fxml",
-                    (Node) event.getSource(), "Generar reporte",
-                    (SelectorFechasReporteController ctlr) -> {
-
-                    });
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            Navegador.abrirModal("Reporte repuestos",
+                    "/org/superservice/superservice/selectorFechasReporte.fxml",
+                    (Node) event.getSource(), null);
+        } catch (Exception e) {
+            Alertas.aviso("Modificar repuesto", e.getMessage());
+            return;
         }
     }
 
@@ -297,12 +296,8 @@ public class DepositoController implements Initializable {
 
     @FXML
     private void volver(ActionEvent event) {
-        try {
-            Navegador.cambiarEscena("/org/superservice/superservice/inicio.fxml",
-                    (Node) event.getSource());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        Navegador.cambiarEscena("Inicio", "/org/superservice/superservice/inicio.fxml",
+                (Node) event.getSource(), null);
     }
 
     private void llenarTabla() {

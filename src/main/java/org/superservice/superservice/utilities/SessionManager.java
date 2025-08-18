@@ -29,11 +29,8 @@ public class SessionManager {
             return;
         }
         usuarioSesion = null;
-        try {
-            Navegador.cambiarEscena("/org/superservice/superservice/login.fxml", node);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Navegador.cambiarEscena("Iniciar sesión","/org/superservice/superservice/login.fxml",
+                node, null);
     }
 
     public static boolean haySesionActiva() {

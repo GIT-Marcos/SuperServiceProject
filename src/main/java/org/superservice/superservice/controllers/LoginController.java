@@ -53,27 +53,19 @@ public class LoginController implements Initializable {
 
             Usuario usuario = usuarioServ.loguear(nombreUsuario, inputPass);
             SessionManager.iniciarSesion(usuario);
-
-            Navegador.cambiarEscena("/org/superservice/superservice/inicio.fxml",
-                    (Node) event.getSource());
         } catch (IllegalArgumentException | HibernateException e) {
             Alertas.aviso("Inicio sesión", e.getMessage());
             return;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return;
         }
 
+        Navegador.cambiarEscena("Inicio", "/org/superservice/superservice/inicio.fxml",
+                (Node) event.getSource(), null);
     }
 
     @FXML
     private void crearUsuario(ActionEvent event) {
-        try {
-            Navegador.cambiarEscena("/org/superservice/superservice/crearUsuario.fxml",
-                    (Node) event.getSource());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Navegador.cambiarEscena("Crear usuario","/org/superservice/superservice/crearUsuario.fxml",
+                (Node) event.getSource(), null);
     }
 
     @FXML

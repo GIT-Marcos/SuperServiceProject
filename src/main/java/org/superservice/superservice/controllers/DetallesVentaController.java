@@ -18,9 +18,9 @@ import org.superservice.superservice.entities.Pago;
 import org.superservice.superservice.entities.VentaRepuesto;
 import org.superservice.superservice.enums.EstadoVentaRepuesto;
 import org.superservice.superservice.utilities.Navegador;
+import org.superservice.superservice.utilities.alertas.Alertas;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -83,15 +83,16 @@ public class DetallesVentaController implements Initializable {
     private void agregarPago(ActionEvent event) {
         PagoController controller;
         try {
-            controller = Navegador.abrirModal("/org/superservice/superservice/pago.fxml",
-                    (Node) event.getSource(), "Agregar pago",
+            controller = Navegador.abrirModal("Agregar pago", "/org/superservice/superservice/pago.fxml",
+                    (Node) event.getSource(),
                     (PagoController ctlr) -> {
                         ctlr.pasarVenta(this.ventaRepuesto);
                     });
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            Alertas.aviso("Agregar pago", e.getMessage());
             return;
         }
+
         if (controller.tomarResultado()) {
             this.ventaRepuesto = controller.tomarVentaCargada();
             pasarVenta(this.ventaRepuesto);

@@ -14,8 +14,6 @@ import org.superservice.superservice.DTOs.VentaRepuestoDTOtabla;
 import org.superservice.superservice.entities.Usuario;
 import org.superservice.superservice.entities.VentaRepuesto;
 import org.superservice.superservice.enums.EstadoVentaRepuesto;
-import org.superservice.superservice.enums.PrivilegioUsuario;
-import org.superservice.superservice.excepciones.DuplicateUserException;
 import org.superservice.superservice.services.UsuarioServ;
 import org.superservice.superservice.services.VentaRepuestoServ;
 import org.superservice.superservice.utilities.*;
@@ -153,15 +151,17 @@ public class VentasController implements Initializable {
         int index = listaDTOsVentas.indexOf(dtoSeleccionado);
         DetallesVentaController controller;
         try {
-            controller = Navegador.abrirModal("/org/superservice/superservice/detallesVenta.fxml",
-                    (Node) event.getSource(), "Detalles de venta",
+            controller = Navegador.abrirModal("Detalles de venta",
+                    "/org/superservice/superservice/detallesVenta.fxml",
+                    (Node) event.getSource(),
                     (DetallesVentaController ctlr) -> {
                         ctlr.pasarVenta(venta);
                     });
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
+        } catch (Exception e) {
+            Alertas.aviso("Detalles de venta", e.getMessage());
             return;
         }
+
         dtoSeleccionado = new VentaRepuestoDTOtabla(controller.tomarVenta());
         this.listaDTOsVentas.set(index, dtoSeleccionado);
     }
@@ -267,12 +267,8 @@ public class VentasController implements Initializable {
 
     @FXML
     private void volver(ActionEvent event) {
-        try {
-            Navegador.cambiarEscena("/org/superservice/superservice/inicio.fxml",
-                    (Node) event.getSource());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        Navegador.cambiarEscena("Inicio", "/org/superservice/superservice/inicio.fxml",
+                (Node) event.getSource(), null);
     }
 
     //todo: hacer este un método que maneje genéricos para reutilizar

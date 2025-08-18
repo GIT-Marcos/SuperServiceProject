@@ -9,7 +9,6 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import org.superservice.superservice.DTOs.DetalleRetiroVentaDTO;
 import org.superservice.superservice.DTOs.RepuestoDTOtabla;
 import org.superservice.superservice.entities.DetalleRetiro;
@@ -239,27 +238,27 @@ public class NuevaVentaController implements Initializable {
         this.notaRetiro.setFecha(LocalDate.now());
         this.notaRetiro.setDetallesRetiro(this.detallesRetiro);
         this.ventaRepuesto = new VentaRepuesto(null, this.notaRetiro, new ArrayList<>());
+        PagoController pagoController;
         try {
-            PagoController pagoController = Navegador.abrirModal("/org/superservice/superservice/pago.fxml", (Node) event.getSource(), "Pago",
+            pagoController = Navegador.abrirModal("Pago", "/org/superservice/superservice/pago.fxml",
+                    (Node) event.getSource(),
                     (PagoController ctlr) -> {
                         ctlr.pasarVenta(this.ventaRepuesto);
                     });
-            if (pagoController.tomarFlagEstadoVenta()) {
-                volver(event);
-            }
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
+        } catch (Exception e) {
+            Alertas.aviso("Pago", e.getMessage());
+            return;
+        }
+
+        if (pagoController.tomarFlagEstadoVenta()) {
+            volver(event);
         }
     }
 
     @FXML
     private void volver(ActionEvent event) {
-        try {
-            Navegador.cambiarEscena("/org/superservice/superservice/inicio.fxml",
-                    (Node) event.getSource());
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
+        Navegador.cambiarEscena("Inicio","/org/superservice/superservice/inicio.fxml",
+                (Node) event.getSource(), null);
     }
 
     private void actualizarLabelTotal() {
