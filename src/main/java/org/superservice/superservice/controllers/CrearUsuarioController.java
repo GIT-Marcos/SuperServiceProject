@@ -84,11 +84,8 @@ public class CrearUsuarioController implements Initializable {
 
     @FXML
     private void volverAlLogin(ActionEvent event) {
-        try {
-            Navegador.cambiarEscena("/org/superservice/superservice/login.fxml", (Node) event.getSource());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Navegador.cambiarEscena("Iniciar sesión","/org/superservice/superservice/login.fxml",
+                (Node) event.getSource(), null);
     }
 
 

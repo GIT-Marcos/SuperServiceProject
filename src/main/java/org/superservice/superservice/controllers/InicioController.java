@@ -32,29 +32,20 @@ public class InicioController implements Initializable {
 
     @FXML
     private void setBtnDeposito(ActionEvent event) {
-        try {
-            Navegador.cambiarEscena("/org/superservice/superservice/deposito.fxml", (Node) event.getSource());
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
+        Navegador.cambiarEscena("Depósito","/org/superservice/superservice/deposito.fxml",
+                (Node) event.getSource(), null);
     }
 
     @FXML
     private void nuevaVenta(ActionEvent event) {
-        try {
-            Navegador.cambiarEscena("/org/superservice/superservice/nuevaVenta.fxml", (Node) event.getSource());
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
+        Navegador.cambiarEscena("Nueva venta","/org/superservice/superservice/nuevaVenta.fxml",
+                (Node) event.getSource(), null);
     }
 
     @FXML
     private void ventas(ActionEvent event) {
-        try {
-            Navegador.cambiarEscena("/org/superservice/superservice/ventas.fxml", (Node) event.getSource());
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
+        Navegador.cambiarEscena("Ventas","/org/superservice/superservice/ventas.fxml",
+                (Node) event.getSource(), null);
     }
 
     @FXML
