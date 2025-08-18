@@ -9,14 +9,13 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
-import org.hibernate.HibernateException;
 import org.superservice.superservice.entities.Usuario;
 import org.superservice.superservice.enums.PrivilegioUsuario;
 import org.superservice.superservice.services.UsuarioServ;
+import org.superservice.superservice.excepciones.DuplicateUserException;
 import org.superservice.superservice.utilities.Navegador;
 import org.superservice.superservice.utilities.ManejadorInputs;
 import org.superservice.superservice.utilities.alertas.Alertas;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -54,33 +53,33 @@ public class CrearUsuarioController implements Initializable {
     @FXML
     private void cargarUsuario(ActionEvent event) {
         String nombre = tfNombre.getText().trim();
-        String contrasenia = tfContrasenia.getText().trim();
+        String contrasenia = tfContrasenia.getText();
         PrivilegioUsuario privilegio = comboRoles.getSelectionModel().getSelectedItem();
 
         try {
             ManejadorInputs.textoGenerico(nombre, true, 4, 20);
-            ManejadorInputs.textoGenerico(contrasenia, true, 4, 20);
-        } catch (IllegalArgumentException iae) {
-            Alertas.aviso("Datos incorrectos", iae.getMessage());
-            return;
-        }
-        Usuario usuario = new Usuario(null, nombre, contrasenia, privilegio);
-        boolean resultado = Alertas.confirmacion("Confirmación", "¿Está seguro que desea " +
-                "cargar el usuario " + nombre + "?");
-        if (!resultado) {
-            return;
-        }
+            ManejadorInputs.contrasenia(contrasenia, true);
 
-        try {
+            boolean resultado = Alertas.confirmacion("Confirmación", "¿Está seguro que desea " +
+                    "cargar el usuario " + nombre + "?");
+            if (!resultado) {
+                return;
+            }
+            Usuario usuario = new Usuario(null, nombre, contrasenia, privilegio);
             usuarioServ.cargarUsuario(usuario);
             Alertas.exito("Nuevo usuario", "Usuario " + nombre + " creado con éxito.");
             volverAlLogin(event);
-        } catch (HibernateException e) {
+        } catch (IllegalArgumentException e) {
+            Alertas.aviso("Datos incorrectos", e.getMessage());
+            return;
+        } catch (DuplicateUserException e) {
+            Alertas.aviso("Nuevo usuario", e.getMessage());
+            return;
+        } catch (Exception e) {
             e.printStackTrace();
-            Alertas.error("Nuevo usuario", "Error de Hibernate.");
+            Alertas.error("Nuevo usuario", "Error inesperado.");
             return;
         }
-
     }
 
     @FXML

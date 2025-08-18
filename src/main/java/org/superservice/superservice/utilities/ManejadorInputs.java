@@ -2,8 +2,13 @@ package org.superservice.superservice.utilities;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ManejadorInputs {
+
+    private static final String CONTRASENA_REGEX = "^[a-zA-Z0-9!@#$%^&*_\\-+=\\[\\]{}/?.,<>;:'\"`~|()]+$";
+    private static final Pattern patronContrasena = Pattern.compile(CONTRASENA_REGEX);
 
     // ==============================
     // Métodos Privados Auxiliares
@@ -247,6 +252,27 @@ public class ManejadorInputs {
         if (chars.length > 0) {
             verificaLargo(chars, 6, 20);
             verificaSoloNumeros(chars);
+        }
+    }
+
+    public static void contrasenia(String input, boolean esObligatorio) {
+        if (input == null) {
+            throw new NullPointerException("contraseña nula al verificar.");
+        }
+        char[] chars= input.toCharArray();
+        if (esObligatorio) {
+            verificaVacio(chars);
+        }
+        if (chars.length > 0) {
+            verificaLargo(chars, 6, 20);
+            if (input.trim().length() != input.length()) {
+                throw new IllegalArgumentException("No pueden haber espacios en blanco al principio o al final " +
+                        "de la contraseña.");
+            }
+            Matcher matcher = patronContrasena.matcher(input);
+            if (!matcher.matches()) {
+                throw new IllegalArgumentException("Ha ingresado caracteres no válidos en la contraseña.");
+            }
         }
     }
 }

@@ -95,8 +95,8 @@ public class PagoController implements Initializable {
             if (metodosPago != MetodosPago.EFECTIVO) {
                 ManejadorInputs.comboBox(marcaTarjeta, true, null, 30);
                 ManejadorInputs.comboBox(bancoTarjeta, true, null, 30);
-                ManejadorInputs.textoGenerico(ultimos4, true, 4, 4);
-                ManejadorInputs.textoGenerico(nroReferencia, true, 4, 20);
+                ManejadorInputs.ultimos4(ultimos4, true);
+                ManejadorInputs.referenciaTarjeta(nroReferencia, true);
             }
 
             if (monto.compareTo(this.venta.getMontoFaltante()) == 1) {
