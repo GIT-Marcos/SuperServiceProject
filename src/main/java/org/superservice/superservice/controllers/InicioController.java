@@ -2,18 +2,17 @@ package org.superservice.superservice.controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import org.superservice.superservice.entities.Usuario;
+import javafx.scene.control.Label;
 import org.superservice.superservice.utilities.Navegador;
-import org.superservice.superservice.utilities.alertas.Alertas;
-import org.superservice.superservice.utilities.dialogs.Dialogs;
-
+import org.superservice.superservice.utilities.SessionManager;
 import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 
-public class InicioController {
-
-    private Usuario usuario;
+public class InicioController implements Initializable {
 
     @FXML
     private Button btnDeposito;
@@ -23,6 +22,13 @@ public class InicioController {
     private Button btnVentas;
     @FXML
     private Button btnCerrarSesion;
+    @FXML
+    private Label labelBienvenido;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        labelBienvenido.setText("Bienvenido "+SessionManager.getUsuarioSesion().getNombre()+"!");
+    }
 
     @FXML
     private void setBtnDeposito(ActionEvent event) {
@@ -53,19 +59,7 @@ public class InicioController {
 
     @FXML
     private void cerrarSesion(ActionEvent event) {
-        boolean confir = Alertas.confirmacion("Cerrar sesión",
-                "¿Está seguro de que quiere cerrar sesión?");
-        if (!confir) {
-            return;
-        }
-        try {
-            Navegador.cambiarEscena("/org/superservice/superservice/login.fxml", (Node) event.getSource());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        SessionManager.cerrarSesion((Node) event.getSource());
     }
 
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
 }

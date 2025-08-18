@@ -234,6 +234,7 @@ public class VentasController implements Initializable {
         }
         VentaRepuestoDTOtabla dtoParaActualizar = tablaVentas.getSelectionModel().getSelectedItem();
         int index = listaDTOsVentas.indexOf(dtoParaActualizar);
+        //todo: q se fije si hay usuario, si no que lo cree y lo cargue
         Usuario usuario = usuarioServ.buscarUsuario(1L);
         String motivo;
         try {

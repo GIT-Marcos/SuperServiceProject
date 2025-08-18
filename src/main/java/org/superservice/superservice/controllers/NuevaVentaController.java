@@ -133,6 +133,7 @@ public class NuevaVentaController implements Initializable {
         this.notaRetiro = new NotaRetiro();
         btnPagar.setDisable(true);
         actualizarLabelTotal();
+        todosRepuestos();
     }
 
     @FXML
@@ -173,13 +174,16 @@ public class NuevaVentaController implements Initializable {
                 break;
             }
         }
-        if (cantidad > repuesto.getStock().getCantidad()) {
+        Double existenteStock=repuesto.getStock().getCantidad();
+        if (cantidad > existenteStock) {
             Alertas.error("Nueva venta", "La cantidad que se intenta vender " + cantidad + "\n" +
                     "es mayor que el existente " + repuesto.getStock().getCantidad());
             return;
         }
-        if (cantidad > repuesto.getStock().getCantMinima()) {
-            boolean confir = Alertas.confirmacion("Nueva venta", "La cantidad de stock a vender es mayor a la mínima tolerada.\n" +
+        Double stockNuevo = existenteStock - cantidad;
+        if (cantidad > stockNuevo) {
+            boolean confir = Alertas.confirmacion("Nueva venta", "El stock luego de la venta quedará por " +
+                    "debajo del mínimo tolerado.\n" +
                     "La cantidad de stock de " + repuesto.getDetalle() + " quedará por de bajo del mínimo establecido " +
                     "(" + repuesto.getStock().getCantMinima() + " " + repuesto.getStock().getUnidadMedida() + ").\n" +
                     "¿Continuar con la venta?");

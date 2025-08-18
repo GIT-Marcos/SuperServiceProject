@@ -242,7 +242,7 @@ public class DepositoController implements Initializable {
 
         boolean resultado = stockServ.agregarStock(stockEditar);
         if (resultado) {
-            Alertas.aviso("Ingreso stock", "Se ha agregado stock con éxito.");
+            Alertas.exito("Ingreso stock", "Se ha agregado stock con éxito.");
         } else {
             Alertas.aviso("Ingreso stock", "Ha ocurrido un error al agregar stock.");
             return;

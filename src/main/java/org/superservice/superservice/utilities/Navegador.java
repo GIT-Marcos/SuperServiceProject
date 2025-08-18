@@ -15,6 +15,7 @@ import java.util.function.Consumer;
 
 public class Navegador {
 
+    //todo: unificar méts, q reciba título y manejar exception acá mismo
     public static void cambiarEscena(String fxmlAbsoluto, Node nodoOrigen) throws IOException {
         FXMLLoader loader = new FXMLLoader(Navegador.class.getResource(fxmlAbsoluto));
         Parent root = loader.load();

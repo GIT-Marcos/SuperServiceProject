@@ -15,6 +15,7 @@ import org.superservice.superservice.entities.Usuario;
 import org.superservice.superservice.services.UsuarioServ;
 import org.superservice.superservice.utilities.ManejadorInputs;
 import org.superservice.superservice.utilities.Navegador;
+import org.superservice.superservice.utilities.SessionManager;
 import org.superservice.superservice.utilities.alertas.Alertas;
 
 import java.io.IOException;
@@ -45,20 +46,18 @@ public class LoginController implements Initializable {
     @FXML
     private void iniciarSesion(ActionEvent event) {
         String nombreUsuario = tfNombreUsuario.getText().trim();
-        String pass = tfContrasenia.getText().trim();
+        String inputPass = tfContrasenia.getText().trim();
         try {
             ManejadorInputs.textoGenerico(nombreUsuario, true, 3, 30);
-            ManejadorInputs.textoGenerico(pass, true, 3, 30);
-            Usuario usuario = usuarioServ.buscarUsuario(1L);
+            ManejadorInputs.contrasenia(inputPass, true);
+
+            Usuario usuario = usuarioServ.loguear(nombreUsuario, inputPass);
+            SessionManager.iniciarSesion(usuario);
+
             Navegador.cambiarEscena("/org/superservice/superservice/inicio.fxml",
-                    (Node) event.getSource(), (InicioController ctrl) -> {
-                        ctrl.setUsuario(usuario);
-                    });
-        } catch (IllegalArgumentException e) {
+                    (Node) event.getSource());
+        } catch (IllegalArgumentException | HibernateException e) {
             Alertas.aviso("Inicio sesión", e.getMessage());
-            return;
-        } catch (HibernateException e) {
-            Alertas.aviso("Inicio sesión", "Error de Hibernate.");
             return;
         } catch (IOException e) {
             e.printStackTrace();

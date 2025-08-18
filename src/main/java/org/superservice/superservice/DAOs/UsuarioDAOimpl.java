@@ -2,12 +2,14 @@ package org.superservice.superservice.DAOs;
 
 import java.util.List;
 import org.hibernate.Session;
+import org.hibernate.exception.ConstraintViolationException;
+import org.postgresql.util.PSQLException;
 import org.superservice.superservice.entities.Usuario;
+import org.superservice.superservice.excepciones.DuplicateUserException;
 import org.superservice.superservice.utilities.Util;
 
 
 /**
- *
  * @author Usuario
  */
 public class UsuarioDAOimpl implements UsuarioDAO {
@@ -32,17 +34,35 @@ public class UsuarioDAOimpl implements UsuarioDAO {
     }
 
     @Override
-    public Usuario cargarUsuario(Usuario usuario) {
+    public Usuario buscarPorNombre(String nombre) {
+        session = Util.getHibernateSession();
+        Usuario usuario = session.createQuery("SELECT DISTINCT u FROM Usuario u " +
+                                "WHERE u.nombre = :nombre",
+                        Usuario.class).setParameter("nombre", nombre)
+                .getSingleResultOrNull();
+        session.close();
+        return usuario;
+    }
+
+    @Override
+    public Usuario cargarUsuario(Usuario usuario) throws DuplicateUserException {
         session = Util.getHibernateSession();
         try {
             session.beginTransaction();
             session.persist(usuario);
             session.getTransaction().commit();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ConstraintViolationException e) {
             session.getTransaction().rollback();
+            if (e.getCause() instanceof PSQLException) {
+                throw new DuplicateUserException("El nombre de usuario: " + usuario.getNombre() +
+                        " ya existe en bd.", e);
+            }
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+            e.printStackTrace();
+        } finally {
+            session.close();
         }
-        session.close();
         return usuario;
     }
 
@@ -56,8 +76,9 @@ public class UsuarioDAOimpl implements UsuarioDAO {
         } catch (Exception e) {
             e.printStackTrace();
             session.getTransaction().rollback();
+        } finally {
+            session.close();
         }
-        session.close();
         return usuario;
     }
 

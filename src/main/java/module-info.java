@@ -7,6 +7,8 @@ module org.superservice.superservice {
     requires com.github.librepdf.openpdf;
     requires java.desktop;
     requires org.jfree.jfreechart;
+    requires jbcrypt;
+    requires org.postgresql.jdbc;
 
 
     opens org.superservice.superservice to javafx.fxml;
@@ -19,5 +21,6 @@ module org.superservice.superservice {
     exports org.superservice.superservice.DAOs;
     opens org.superservice.superservice.DAOs to javafx.fxml;
     opens org.superservice.superservice.DTOs to javafx.base;
+    exports org.superservice.superservice.excepciones;
 
 }
