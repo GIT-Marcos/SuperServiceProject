@@ -14,12 +14,11 @@ import org.superservice.superservice.DTOs.VentaRepuestoDTOtabla;
 import org.superservice.superservice.entities.Usuario;
 import org.superservice.superservice.entities.VentaRepuesto;
 import org.superservice.superservice.enums.EstadoVentaRepuesto;
+import org.superservice.superservice.enums.PrivilegioUsuario;
+import org.superservice.superservice.excepciones.DuplicateUserException;
 import org.superservice.superservice.services.UsuarioServ;
 import org.superservice.superservice.services.VentaRepuestoServ;
-import org.superservice.superservice.utilities.GeneradorPDF;
-import org.superservice.superservice.utilities.GeneradorReportes;
-import org.superservice.superservice.utilities.ManejadorInputs;
-import org.superservice.superservice.utilities.Navegador;
+import org.superservice.superservice.utilities.*;
 import org.superservice.superservice.utilities.alertas.Alertas;
 import org.superservice.superservice.utilities.dialogs.Dialogs;
 
@@ -234,8 +233,11 @@ public class VentasController implements Initializable {
         }
         VentaRepuestoDTOtabla dtoParaActualizar = tablaVentas.getSelectionModel().getSelectedItem();
         int index = listaDTOsVentas.indexOf(dtoParaActualizar);
-        //todo: q se fije si hay usuario, si no que lo cree y lo cargue
-        Usuario usuario = usuarioServ.buscarUsuario(1L);
+        Usuario usuarioCancelador = SessionManager.getUsuarioSesion();
+        if (usuarioCancelador == null) {
+            Alertas.error("Cancelación de venta", "No hay usuario en la sesión activa.");
+            return;
+        }
         String motivo;
         try {
             motivo = Dialogs.motivoBorrado();
@@ -252,7 +254,7 @@ public class VentasController implements Initializable {
             return;
         } else {
             try {
-                venta = ventaRepuestoServ.borradoLogico(venta, motivo, usuario);
+                venta = ventaRepuestoServ.borradoLogico(venta, motivo, usuarioCancelador);
             } catch (HibernateException he) {
                 Alertas.aviso("Cancelación de venta", he.getMessage());
                 return;
