@@ -252,6 +252,7 @@ public class RepuestoDAOimpl implements RepuestoDAO {
         return repuesto;
     }
 
+    //todo: reciba obj y haga merge.
     @Override
     public boolean borradoLogico(Long id) {
         session = Util.getHibernateSession();

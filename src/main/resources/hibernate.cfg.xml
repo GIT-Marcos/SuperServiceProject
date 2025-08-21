@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+    <session-factory>
+
+        <!-- Configuración de la base de datos -->
+        <property name="connection.driver_class">org.postgresql.Driver</property>
+        <property name="connection.url">jdbc:postgresql://localhost:5432/super_service</property>
+        <property name="connection.username">postgres</property>
+        <!-- NO poner la contraseña aquí, poner en db.properties -->
+        <!-- <property name="connection.password"></property> -->
+
+        <!-- Dialecto para PostgreSQL -->
+        <property name="dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+        <!-- Comportamiento del esquema:
+        update: trabaja sobre las tablas y sus datos ya creados
+        create-drop: cuando arranca el programa borra las tablas y para generarlas de nuevo-->
+        <property name="hbm2ddl.auto">create-drop</property>
+        <!-- Mostrar SQL en consola -->
+        <property name="show_sql">true</property>
+        <property name="format_sql">true</property>
+
+        <!-- Cache -->
+        <property name="cache.provider_class">org.hibernate.cache.NoCacheProvider</property>
+
+        <!-- Mapping automático vía anotaciones -->
+        <!-- Aquí puedes registrar tus clases anotadas manualmente si no usas configuración programática -->
+
+    </session-factory>
+</hibernate-configuration>

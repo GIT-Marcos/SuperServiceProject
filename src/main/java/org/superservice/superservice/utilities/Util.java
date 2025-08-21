@@ -1,55 +1,101 @@
 package org.superservice.superservice.utilities;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
-import org.hibernate.Session;
 
- 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+import org.superservice.superservice.entities.*;
+
+
 public class Util {
-    private static final String UNIDAD_PERSISTENCIA = "persistence";
-    private static final EntityManagerFactory emf;
+    private static final String PROPERTIES_PATH = "config/db.properties";
+    private static final SessionFactory sessionFactory;
+    private static final ThreadLocal<Session> threadLocalSession = new ThreadLocal<>();
 
     static {
-        EntityManagerFactory tempEmf = null;
-        try {
-            // Cargar las propiedades desde un archivo externo
-            Properties props = new Properties();
-            try (FileInputStream fis = new FileInputStream("config/db.properties")) {
-                props.load(fis);
-            }
+        Properties properties = cargarProperties();
+        sessionFactory = inicializarSessionFactory(properties);
+    }
 
-            // Convertir a Map y pasar al EntityManagerFactory
-            Map<String, Object> overrideProps = new HashMap<>((Map) props);
-
-            tempEmf = Persistence.createEntityManagerFactory(UNIDAD_PERSISTENCIA, overrideProps);
-            System.out.println("EntityManagerFactory creado exitosamente con propiedades externas.");
+    private static Properties cargarProperties() {
+        Properties props = new Properties();
+        try (FileInputStream fis = new FileInputStream(PROPERTIES_PATH)) {
+            props.load(fis);
+            System.out.println("✅ Propiedades cargadas desde " + PROPERTIES_PATH);
         } catch (IOException ex) {
-            System.err.println("No se pudo cargar db.properties: " + ex.getMessage());
+            System.err.println("⚠️ No se pudo cargar " + PROPERTIES_PATH + ": " + ex.getMessage());
+        }
+        return props;
+    }
+
+    private static SessionFactory inicializarSessionFactory(Properties props) {
+        try {
+            Configuration configuration = new Configuration().configure(); // hibernate.cfg.xml
+            configuration.addProperties(props);
+            //agregar entidades
+            configuration.addAnnotatedClass(Repuesto.class);
+            configuration.addAnnotatedClass(Stock.class);
+            configuration.addAnnotatedClass(AuditoriaVenta.class);
+            configuration.addAnnotatedClass(DetalleRetiro.class);
+            configuration.addAnnotatedClass(Pago.class);
+            configuration.addAnnotatedClass(Usuario.class);
+            configuration.addAnnotatedClass(VentaRepuesto.class);
+            configuration.addAnnotatedClass(NotaRetiro.class);
+
+            SessionFactory factory = configuration.buildSessionFactory();
+            System.out.println("✅ SessionFactory creado exitosamente.");
+            return factory;
         } catch (Throwable ex) {
-            System.err.println("Error al crear EntityManagerFactory: " + ex);
+            System.err.println("❌ Error al crear SessionFactory: " + ex);
             throw new ExceptionInInitializerError(ex);
         }
-
-        emf = tempEmf;
     }
 
-    public static EntityManager getEntityManager() {
-        return emf.createEntityManager();
-    }
-
+    /**
+     * Devuelve una nueva Hibernate Session desde SessionFactory.
+     * ¡NO compartir entre hilos!
+     * Funciona con la config de hibernarte.cfg.xml.
+     */
     public static Session getHibernateSession() {
-        return getEntityManager().unwrap(Session.class);
+        return sessionFactory.openSession();
     }
 
+    /**
+     * Más robusto para usar varios hilos que getHibernateSession().
+     * Luego de usar cerrar en un finally con cerrarHibernateSessionThreadSafe().
+     */
+    public static Session getHibernateSessionThreadSafe(){
+        Session session = threadLocalSession.get();
+        if (session == null || !session.isOpen()) {
+            session = sessionFactory.openSession();
+            threadLocalSession.set(session);
+        }
+        return session;
+    }
+
+    public static void cerrarHibernateSessionThreadSafe() {
+        Session session = threadLocalSession.get();
+        threadLocalSession.remove();
+        if (session != null && session.isOpen()) {
+            session.close();
+        }
+    }
+
+    public static SessionFactory getSessionFactory() {
+        return sessionFactory;
+    }
+
+
+    /**
+     * Cierra todas las fábricas al apagar la aplicación.
+     */
+    //todo: agregar esto al cerrar app
     public static void shutdown() {
-        if (emf != null) {
-            emf.close();
+        if (sessionFactory != null && !sessionFactory.isClosed()) {
+            sessionFactory.close();
         }
     }
 }
