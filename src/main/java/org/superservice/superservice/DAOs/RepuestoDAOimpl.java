@@ -12,156 +12,124 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.superservice.superservice.DTOs.RepuestoRetiradoReporteDTO;
 import org.superservice.superservice.entities.Repuesto;
 import org.superservice.superservice.entities.Stock;
+import org.superservice.superservice.utilities.TransactionExecutor;
 import org.superservice.superservice.utilities.Util;
 
-public class RepuestoDAOimpl implements RepuestoDAO {
+public class RepuestoDAOimpl extends GenericDAOImpl<Repuesto, Long> implements RepuestoDAO {
 
-    private Session session;
-
-    @Override
-    public List<Repuesto> todosRepuestos() {
-        session = Util.getHibernateSession();
-        List<Repuesto> repuestos = session.createQuery("SELECT r FROM Repuesto r JOIN FETCH r.stock "
-                        + "WHERE r.activo = true ORDER BY r.detalle",
-                Repuesto.class).list();
-        session.close();
-        return repuestos;
-    }
-
-    @Override
-    public Repuesto buscarRepuesto(Long id) {
-        session = Util.getHibernateSession();
-        Repuesto repuesto = session.find(Repuesto.class, id);
-        session.close();
-        return repuesto;
+    public RepuestoDAOimpl(Class<Repuesto> entityClass) {
+        super(entityClass);
     }
 
     @Override
     public Long cuentaRespBajoStock() {
-        session = Util.getHibernateSession();
-        Long cantidad = session.createQuery("SELECT DISTINCT COUNT(r) FROM Repuesto r "
-                                + "WHERE r.stock.cantidad <= r.stock.cantMinima AND "
-                                + "r.stock.activo = true",
-                        Long.class)
-                .getSingleResult();
-        session.close();
-        return cantidad;
+        return TransactionExecutor.executeInTransaction(session ->
+                session.createQuery("SELECT DISTINCT COUNT(r) FROM Repuesto r "
+                                        + "WHERE r.stock.cantidad <= r.stock.cantMinima AND "
+                                        + "r.stock.activo = true",
+                                Long.class)
+                        .getSingleResult());
     }
 
     @Override
     public Boolean consultaEstado(String codBarra) {
-        Boolean resultado;
-        session = Util.getHibernateSession();
-        resultado = session.createNativeQuery("SELECT r.activo FROM repuestos r WHERE r.codigo_barra = :codBarra",
-                        Boolean.class)
-                .setParameter("codBarra", codBarra)
-                .getSingleResultOrNull();
-        session.close();
-        return resultado;
-    }
-
-    @Override
-    public Repuesto buscarPorCodBarraExacto(String codBarra) {
-        session = Util.getHibernateSession();
-        Repuesto repuesto = session.createQuery("SELECT DISTINCT r FROM Repuesto r "
-                                + "WHERE r.codBarra LIKE :codBarra",
-                        Repuesto.class)
-                .setParameter("codBarra", codBarra)
-                .getSingleResult();
-        session.close();
-        return repuesto;
-    }
-
-    @Override
-    public List<Repuesto> buscarPorCodBarra(String codBarra) {
-        session = Util.getHibernateSession();
-        List<Repuesto> lista = session.createQuery("SELECT DISTINCT r FROM Repuesto r "
-                        + "WHERE r.codBarra LIKE :codBarra "
-                        + "AND r.activo = true",
-                Repuesto.class).setParameter("codBarra", "%" + codBarra + "%").list();
-        session.close();
-        return lista;
-    }
-
-    @Override
-    public List<Repuesto> buscarPorDetalle(String detalle) {
-        session = Util.getHibernateSession();
-        List<Repuesto> lista = session.createQuery("SELECT DISTINCT r FROM Repuesto r "
-                        + "WHERE LOWER(r.detalle) "
-                        + "LIKE :detalle "
-                        + "AND r.activo = true",
-                Repuesto.class).setParameter("detalle", "%" + detalle.toLowerCase() + "%").list();
-        session.close();
-        return lista;
+        return TransactionExecutor.executeInTransaction(session ->
+                session.createQuery("SELECT DISTINCT r.activo FROM Repuesto r " +
+                                        "WHERE r.codBarra = :codBarra",
+                                Boolean.class)
+                        .setParameter("codBarra", codBarra)
+                        .getSingleResultOrNull());
     }
 
     @Override
     public List<Repuesto> buscarConFiltros(String inputParaBuscar, Integer opcionBusqueda, Boolean stockNormal,
                                            Boolean stockBajo, String nombreColumnaOrnenar, Integer tipoOrden) {
-        session = Util.getHibernateSession();
-        CriteriaBuilder cb = session.getCriteriaBuilder();
-        CriteriaQuery<Repuesto> query = cb.createQuery(Repuesto.class);
-        Root<Repuesto> root = query.from(Repuesto.class);
-        Join<Repuesto, Stock> joinStock = root.join("stock");
-        List<Predicate> filtros = new ArrayList<>();
+        List<Repuesto> repuestos = new ArrayList<>();
+        Transaction tx = null;
+        try (Session session = Util.getHibernateSessionThreadSafe()) {
+            tx = session.beginTransaction();
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<Repuesto> query = cb.createQuery(Repuesto.class);
+            Root<Repuesto> root = query.from(Repuesto.class);
+            Join<Repuesto, Stock> joinStock = root.join("stock");
+            List<Predicate> filtros = new ArrayList<>();
 
-        filtros.add(cb.equal(root.get("activo"), Boolean.TRUE));
+            filtros.add(cb.equal(root.get("activo"), Boolean.TRUE));
 
-        //SI SE QUIERE BUSCAR ALGO...
-        if (inputParaBuscar != null) {
-            switch (opcionBusqueda) {
-                case 0: //se eligió cod barra
-                    filtros.add(cb.like(cb.lower(root.get("codBarra")), "%" + inputParaBuscar.toLowerCase() + "%"));
-                    break;
-                case 1: //se eligió detalle
-                    filtros.add(cb.like(cb.lower(root.get("detalle")), "%" + inputParaBuscar.toLowerCase() + "%"));
-                    break;
-                case 2:
-                    filtros.add(cb.like(cb.lower(root.get("marca")), "%" + inputParaBuscar.toLowerCase() + "%"));
-                    break;
-                default:
-                    throw new AssertionError();
+            //SI SE QUIERE BUSCAR ALGO...
+            if (inputParaBuscar != null) {
+                switch (opcionBusqueda) {
+                    case 0: //se eligió cod barra
+                        filtros.add(cb.like(cb.lower(root.get("codBarra")), "%" + inputParaBuscar.toLowerCase() + "%"));
+                        break;
+                    case 1: //se eligió detalle
+                        filtros.add(cb.like(cb.lower(root.get("detalle")), "%" + inputParaBuscar.toLowerCase() + "%"));
+                        break;
+                    case 2:
+                        filtros.add(cb.like(cb.lower(root.get("marca")), "%" + inputParaBuscar.toLowerCase() + "%"));
+                        break;
+                    default:
+                        throw new AssertionError();
+                }
             }
+            //SI LOS 2 VIENEN VERDADEROS, O SEA QUIERE VER CUALQUIERA, NO ENTRA EN NINGÚN IF
+            if (stockNormal && !stockBajo) {
+                filtros.add(cb.greaterThan(joinStock.get("cantidad"), joinStock.get("cantMinima")));
+            } else if (stockBajo && !stockNormal) {
+                filtros.add(cb.lessThanOrEqualTo(joinStock.get("cantidad"), joinStock.get("cantMinima")));
+            }
+            query.where(cb.and(filtros.toArray(new Predicate[0])));
+            if (tipoOrden == 0) {
+                query.orderBy(cb.asc(root.get(nombreColumnaOrnenar)));
+            } else if (tipoOrden == 1) {
+                query.orderBy(cb.desc(root.get(nombreColumnaOrnenar)));
+            }
+            repuestos = session.createQuery(query).list();
+            tx.commit();
+        } catch (RuntimeException e) {
+            if (tx != null && tx.isActive()) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            Util.cerrarHibernateSessionThreadSafe();
         }
-        //SI LOS 2 VIENEN VERDADEROS, O SEA QUIERE VER CUALQUIERA, NO ENTRA EN NINGÚN IF
-        if (stockNormal && !stockBajo) {
-            filtros.add(cb.greaterThan(joinStock.get("cantidad"), joinStock.get("cantMinima")));
-        } else if (stockBajo && !stockNormal) {
-            filtros.add(cb.lessThanOrEqualTo(joinStock.get("cantidad"), joinStock.get("cantMinima")));
-        }
-        query.where(cb.and(filtros.toArray(new Predicate[0])));
-        if (tipoOrden == 0) {
-            query.orderBy(cb.asc(root.get(nombreColumnaOrnenar)));
-        } else if (tipoOrden == 1) {
-            query.orderBy(cb.desc(root.get(nombreColumnaOrnenar)));
-        }
-        List<Repuesto> repuestos = session.createQuery(query).setMaxResults(50).getResultList();
-        session.close();
         return repuestos;
     }
 
     @Override
     public List<RepuestoRetiradoReporteDTO> masRetirados(Integer cantidadRepuestos,
                                                          LocalDate fechaInicio, LocalDate fechaFin) {
-        session = Util.getHibernateSession();
-
-        TypedQuery<Object[]> query = session.createQuery(
-                        "SELECT dr.repuesto, COUNT(dr.repuesto) "
-                                + "FROM NotaRetiro nr "
-                                + "JOIN nr.detalleRetiroList dr "
-                                + "WHERE nr.fecha BETWEEN :fechaInicio AND :fechaFin "
-                                + "GROUP BY dr.repuesto "
-                                + "ORDER BY COUNT(dr.repuesto) DESC",
-                        Object[].class)
-                .setParameter("fechaInicio", fechaInicio)
-                .setParameter("fechaFin", fechaFin)
-                .setMaxResults(cantidadRepuestos);
-
-        List<Object[]> lista = query.getResultList();
         List<RepuestoRetiradoReporteDTO> masRetirados = new ArrayList<>();
+        List<Object[]> lista = new ArrayList<>();
+        Transaction tx = null;
+        try (Session session = Util.getHibernateSessionThreadSafe()) {
+            tx = session.beginTransaction();
+            TypedQuery<Object[]> query = session.createQuery(
+                            "SELECT dr.repuesto, COUNT(dr.repuesto) "
+                                    + "FROM NotaRetiro nr "
+                                    + "JOIN nr.detalleRetiroList dr "
+                                    + "WHERE nr.fecha BETWEEN :fechaInicio AND :fechaFin "
+                                    + "GROUP BY dr.repuesto "
+                                    + "ORDER BY COUNT(dr.repuesto) DESC",
+                            Object[].class)
+                    .setParameter("fechaInicio", fechaInicio)
+                    .setParameter("fechaFin", fechaFin)
+                    .setMaxResults(cantidadRepuestos);
+            lista = query.getResultList();
+            tx.commit();
+        } catch (RuntimeException e) {
+            if (tx != null && tx.isActive()) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            Util.cerrarHibernateSessionThreadSafe();
+        }
 
         for (Object[] fila : lista) {
             Repuesto repuesto = (Repuesto) fila[0];
@@ -174,109 +142,44 @@ public class RepuestoDAOimpl implements RepuestoDAO {
             );
             masRetirados.add(dto);
         }
-
-        session.close();
         return masRetirados;
     }
 
     @Override
-    public Repuesto cargarRepuesto(Repuesto repuesto) {
-        session = Util.getHibernateSession();
-        try {
-            session.beginTransaction();
-            session.persist(repuesto);
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            e.printStackTrace();
-            session.getTransaction().rollback();
-        }
-        session.close();
-        return repuesto;
-    }
+    public void reviveRepuestoInactivo(Repuesto repuesto) {
+        Transaction tx = null;
+        try (Session session = Util.getHibernateSessionThreadSafe()) {
+            tx = session.beginTransaction();
+            Repuesto repuestoInactivo = session.createQuery("SELECT r FROM Repuesto r JOIN FETCH r.stock "
+                                    + "WHERE r.codBarra = :codBarra",
+                            Repuesto.class)
+                    .setParameter("codBarra", repuesto.getCodBarra())
+                    .getSingleResultOrNull();
 
-    @Override
-    public Repuesto modificarRepuesto(Repuesto repuesto) {
-        session = Util.getHibernateSession();
-        try {
-            session.beginTransaction();
+            repuesto.setId(repuestoInactivo.getId());
+            repuesto.getStock().setId(repuestoInactivo.getId());
             session.merge(repuesto);
-            session.getTransaction().commit();
-        } catch (Exception e) {
+            tx.commit();
+        } catch (RuntimeException e) {
+            if (tx != null && tx.isActive()) {
+                tx.rollback();
+            }
             e.printStackTrace();
-            session.getTransaction().rollback();
-        }
-        session.close();
-        return repuesto;
-    }
-
-    @Override
-    public Repuesto reviveRepuestoInactivo(Repuesto repuesto) {
-        session = Util.getHibernateSession();
-        //El que viene tiene la id nula pq se la genera el orm, hay que buscarla
-        Long idInactivo = session.createNativeQuery("SELECT r.pk_repuesto FROM repuestos r "
-                                + "WHERE r.codigo_barra = :codigo_barra",
-                        Long.class)
-                .setParameter("codigo_barra", repuesto.getCodBarra())
-                .getSingleResultOrNull();
-        try {
-            session.beginTransaction();
-            session.createNativeQuery("UPDATE stocks SET cantidad_minima= :cantidad_minima, "
-                                    + "cantidad= :cantidad, lote= :lote, observaciones= :obser, ubicacion= :ubic, "
-                                    + "activo = true "
-                                    + "WHERE pk_stock= :pk",
-                            Integer.class)
-                    .setParameter("cantidad_minima", repuesto.getStock().getCantMinima())
-                    .setParameter("cantidad", repuesto.getStock().getCantidad())
-                    .setParameter("lote", repuesto.getStock().getLote())
-                    .setParameter("obser", repuesto.getStock().getObservaciones())
-                    .setParameter("ubic", repuesto.getStock().getUbicacion())
-                    .setParameter("pk", idInactivo)
-                    .executeUpdate();
-            session.createNativeQuery("UPDATE repuestos SET detalle= :detalle, "
-                                    + "marca= :marca, precio= :precio, "
-                                    + "activo = true "
-                                    + "WHERE pk_repuesto= :pk",
-                            Integer.class)
-                    .setParameter("detalle", repuesto.getDetalle())
-                    .setParameter("marca", repuesto.getMarca())
-                    .setParameter("precio", repuesto.getPrecio())
-                    .setParameter("pk", idInactivo)
-                    .executeUpdate();
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            e.printStackTrace();
-            session.getTransaction().rollback();
+            throw e;
         } finally {
-            session.close();
+            Util.cerrarHibernateSessionThreadSafe();
         }
-        return repuesto;
     }
 
     //todo: reciba obj y haga merge.
     @Override
-    public boolean borradoLogico(Long id) {
-        session = Util.getHibernateSession();
-        try {
-            session.beginTransaction();
-            session.createNativeQuery("UPDATE stocks SET activo = false "
-                                    + "WHERE pk_stock= :pk",
-                            Integer.class)
-                    .setParameter("pk", id)
-                    .executeUpdate();
-            session.createNativeQuery("UPDATE repuestos SET activo = false "
-                                    + "WHERE pk_repuesto= :pk",
-                            Integer.class)
-                    .setParameter("pk", id)
-                    .executeUpdate();
-            session.getTransaction().commit();
-            return true;
-        } catch (Exception e) {
-            session.getTransaction().rollback();
-            e.printStackTrace();
-            return false;
-        } finally {
-            session.close();
-        }
+    public void borradoLogico(Repuesto repuesto) {
+        repuesto.setActivo(Boolean.FALSE);
+        repuesto.getStock().setActivo(Boolean.FALSE);
+        TransactionExecutor.executeInTransaction(session -> {
+            session.merge(repuesto);
+            return null;
+        });
     }
 
 }

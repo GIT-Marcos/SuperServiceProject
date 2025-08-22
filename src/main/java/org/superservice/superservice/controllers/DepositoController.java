@@ -165,6 +165,7 @@ public class DepositoController implements Initializable {
             return;
         }
         if (controller.getGuardado()) {
+            //TODO: sobreescribir el repuesto en la lista this.repuestos.
             int indexModificado = this.repuestosTabla.indexOf(dtoSeleccionado);
             RepuestoDTOtabla dtoModificado = new RepuestoDTOtabla(controller.getRepuestoCargado());
             this.repuestosTabla.set(indexModificado, dtoModificado);
@@ -198,15 +199,14 @@ public class DepositoController implements Initializable {
             if (!confir2) {
                 return;
             }
-            result = repuestoServ.borrarRepuesto(repBorrar);
-        } catch (NullPointerException npe) {
-            Alertas.error("Borrado repuesto", npe.getMessage());
+            repuestoServ.borrarRepuesto(repBorrar);
+        } catch (RuntimeException e) {
+            Alertas.error("Borrado repuesto", e.getMessage());
             return;
         }
-        if (result) {
-            Alertas.exito("Borrado repuesto", "Se ha borrado el repuesto: " + repBorrar.getDetalle() + " con éxito.");
-            this.repuestosTabla.remove(dtoBorrar);
-        }
+        Alertas.exito("Borrado repuesto", "Se ha borrado el repuesto: " +
+                repBorrar.getDetalle() + " con éxito.");
+        this.repuestosTabla.remove(dtoBorrar);
     }
 
     @FXML

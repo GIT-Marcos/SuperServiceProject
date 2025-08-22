@@ -16,6 +16,7 @@ module org.superservice.superservice {
     exports org.superservice.superservice.entities;
     exports org.superservice.superservice.utilities;
     exports org.superservice.superservice.controllers;
+    exports org.superservice.superservice.DTOs;
     opens org.superservice.superservice.controllers to javafx.fxml;
     opens org.superservice.superservice.entities to org.hibernate.orm.core;
     exports org.superservice.superservice.DAOs;
